@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">RecyclerViewExemple</string>
+    <string name="title_age">AGE</string>
+    <string name="title_gender">GENDER</string>
+    <string name="title_last_name">LAST NAME</string>
+    <string name="title_first_name">FIRST NAME</string>
+    <string name="person_desc">person</string>
+</resources>
