@@ -22,6 +22,5 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         } }
         student_recycler_view.adapter = adapter
-
     }
 }
