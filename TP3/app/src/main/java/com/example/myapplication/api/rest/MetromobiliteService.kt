@@ -1,9 +1,9 @@
-package com.example.recyclerviewexemple.api.rest
+package com.example.myapplication.api.rest
 
 import fr.clerc.myapplication.kotlin.model.FeatureCollection
+import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
-import io.reactivex.Observable
 
 interface MetromobiliteService {
     @GET("/api/findType/json")
