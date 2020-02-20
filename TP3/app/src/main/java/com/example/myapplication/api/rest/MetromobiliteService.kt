@@ -7,5 +7,5 @@ import retrofit2.http.Query
 
 interface MetromobiliteService {
     @GET("/api/findType/json")
-    fun getPointsVente(@Query("types") types: String, @Query("query") query: String): Observable<List<FeatureCollection>>
+    fun getPointsVente(@Query("types") types: String, @Query("query") query: String?): Observable<FeatureCollection>
 }
