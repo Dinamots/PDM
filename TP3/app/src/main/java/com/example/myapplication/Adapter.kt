@@ -3,44 +3,45 @@ package com.example.myapplication
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import fr.clerc.myapplication.kotlin.Student
-import kotlinx.android.synthetic.main.student_layout.view.*
+import fr.clerc.myapplication.kotlin.model.Feature
+import kotlinx.android.synthetic.main.agence_layout.view.*
+import java.util.*
 
 
-open class Adapter(val students: List<Student>, val listener: (Student) -> Unit) :
+open class Adapter(var features: List<Feature>, val listener: (Feature) -> Unit) :
     RecyclerView.Adapter<Adapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater
             .from(parent.context)
-            .inflate(R.layout.student_layout, parent, false)
+            .inflate(R.layout.agence_layout, parent, false)
         return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return students.size
+        return features.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val student: Student = students[position]
+        val feature: Feature = features[position]
 
-        holder.lastName.text = student.lastName
-        holder.firstName.text = student.firstName
+        holder.nomAgence.text = feature.properties.name.toUpperCase(Locale.FRANCE)
+        holder.streetNumber.text = feature.properties.street.toUpperCase(Locale.FRANCE)
+        holder.postalCodeAndCity.text =
+            "${feature.properties.postalCode} - ${feature.properties.city}".toUpperCase(
+                Locale.FRANCE
+            )
 
-        holder.itemView.setOnClickListener { listener(student) }
+        holder.itemView.setOnClickListener { listener(feature) }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(
         itemView
     ) {
-
-        var firstName = itemView.nom
-        var lastName = itemView.prenom
-        var imageView = itemView.student_img
-
-
+        var nomAgence = itemView.nom_agence
+        var streetNumber = itemView.street_number
+        var postalCodeAndCity = itemView.postal_code_and_city
     }
 
 }

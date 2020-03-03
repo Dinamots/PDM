@@ -1,6 +1,7 @@
 package fr.clerc.myapplication.kotlin.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Properties(
         val id: Int,
@@ -23,4 +24,4 @@ data class Properties(
         @SerializedName("PaysVoironnais")
         val isPaysVoironnais: Boolean
 
-)
+) : Serializable

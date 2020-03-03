@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">RecyclerViewExemple</string>
+    <string name="app_name">TP3</string>
     <string name="title_age">AGE</string>
     <string name="title_gender">GENDER</string>
     <string name="title_last_name">LAST NAME</string>
     <string name="title_first_name">FIRST NAME</string>
     <string name="person_desc">person</string>
+    <string name="metrom">metrom</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
