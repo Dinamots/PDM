@@ -13,7 +13,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
+    private val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,10 +37,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initAdapters() {
-        initAdapter(top_rated_movies, getAdapter())
-        initAdapter(upcoming_movies, getAdapter())
-        initAdapter(now_playing_movies, getAdapter())
-        initAdapter(popular_movies, getAdapter())
+        initAdapter(top_rated_movies, getAdapter(getString(R.string.top_rated_movies)))
+        initAdapter(upcoming_movies, getAdapter(getString(R.string.upcoming_movies)))
+        initAdapter(now_playing_movies, getAdapter(getString(R.string.now_playing_movies)))
+        initAdapter(popular_movies, getAdapter(getString(R.string.popular_movies)))
     }
 
     private fun initAdapter(recyclerView: RecyclerView?, adapter: MovieAdapter) {
@@ -72,8 +72,8 @@ class MainActivity : AppCompatActivity() {
             )
     }
 
-    private fun getAdapter(): MovieAdapter {
-        return MovieAdapter(listOf()) { feature ->
+    private fun getAdapter(headerString: String): MovieAdapter {
+        return MovieAdapter(listOf(), headerString) { feature ->
             run {
                 // val intent = Intent(this, AgenceDetailActivity::class.java)
                 // intent.putExtra("feature", feature)
