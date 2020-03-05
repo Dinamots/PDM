@@ -1,99 +1,55 @@
 package fr.m1miage.tmdb
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
 import android.view.Menu
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.navigation.NavigationView
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import fr.m1miage.tmdb.api.RetrofitManager
-import fr.m1miage.tmdb.api.model.MovieResponse
-import fr.m1miage.tmdb.api.model.Search
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build())
         setContentView(R.layout.activity_main)
-        initLayoutManagers()
-        initAdapters()
-        initMovieLists()
-        initToolbar()
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
-    }
-
-    private fun initToolbar() {
-
-    }
-
-
-    private fun initLayoutManagers() {
-        top_rated_movies.layoutManager =
-            LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        upcoming_movies.layoutManager =
-            LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        now_playing_movies.layoutManager =
-            LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        popular_movies.layoutManager =
-            LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-
-    }
-
-    private fun initAdapters() {
-        initAdapter(top_rated_movies, getAdapter(getString(R.string.top_rated_movies)))
-        initAdapter(upcoming_movies, getAdapter(getString(R.string.upcoming_movies)))
-        initAdapter(now_playing_movies, getAdapter(getString(R.string.now_playing_movies)))
-        initAdapter(popular_movies, getAdapter(getString(R.string.popular_movies)))
-    }
-
-    private fun initAdapter(recyclerView: RecyclerView?, adapter: MovieAdapter) {
-        recyclerView?.adapter = adapter
-        if (recyclerView != null) adapterMap[recyclerView.id] = adapter
-
-    }
-
-    private fun initMovieLists() {
-        initMovieList(RetrofitManager.tmdbAPI.getNowPlaying(), adapterMap[now_playing_movies.id])
-        initMovieList(RetrofitManager.tmdbAPI.getPopular(), adapterMap[popular_movies.id])
-        initMovieList(RetrofitManager.tmdbAPI.getTopRated(), adapterMap[top_rated_movies.id])
-        initMovieList(RetrofitManager.tmdbAPI.getUpcoming(), adapterMap[upcoming_movies.id])
-
-    }
-
-    private fun initMovieList(
-        movieObservable: Observable<Search<MovieResponse>>,
-        movieAdapter: MovieAdapter?
-    ) {
-        val res = movieObservable
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { res ->
-                    movieAdapter?.movies = res.results
-                    movieAdapter?.notifyDataSetChanged()
-                },
-                { err -> err.printStackTrace() }
-            )
-    }
-
-    private fun getAdapter(headerString: String): MovieAdapter {
-        return MovieAdapter(listOf(), headerString) { feature ->
-            run {
-                // val intent = Intent(this, AgenceDetailActivity::class.java)
-                // intent.putExtra("feature", feature)
-                // startActivity(intent)
-            }
+        val fab: FloatingActionButton = findViewById(R.id.fab)
+        fab.setOnClickListener { view ->
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
         }
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        val navView: NavigationView = findViewById(R.id.nav_view)
+        val navController = findNavController(R.id.nav_host_fragment)
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        appBarConfiguration = AppBarConfiguration(setOf(
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow), drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
     }
 
-   /* override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return super.onCreateOptionsMenu(menu)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
 
-    } */
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
 }
