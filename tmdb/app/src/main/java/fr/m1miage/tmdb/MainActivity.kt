@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
         initLayoutManagers()
         initAdapters()
         initMovieLists()
-        println(adapterMap.toString())
     }
 
     private fun initLayoutManagers() {
@@ -74,13 +73,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getAdapter(): MovieAdapter {
-        val adapter = MovieAdapter(listOf()) { feature ->
+        return MovieAdapter(listOf()) { feature ->
             run {
                 // val intent = Intent(this, AgenceDetailActivity::class.java)
                 // intent.putExtra("feature", feature)
                 // startActivity(intent)
             }
         }
-        return adapter
     }
 }
