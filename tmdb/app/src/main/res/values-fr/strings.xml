@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="upcoming_movies">Prochainement</string>
+    <string name="now_playing_movies">En salle</string>
+    <string name="top_rated_movies">Mieux notés</string>
+    <string name="popular_movies">Populaires</string>
+</resources>

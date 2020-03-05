@@ -3,6 +3,8 @@ package fr.m1miage.tmdb
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
+import android.view.Menu
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import fr.m1miage.tmdb.api.RetrofitManager
@@ -22,7 +24,14 @@ class MainActivity : AppCompatActivity() {
         initLayoutManagers()
         initAdapters()
         initMovieLists()
+        initToolbar()
+
     }
+
+    private fun initToolbar() {
+
+    }
+
 
     private fun initLayoutManagers() {
         top_rated_movies.layoutManager =
@@ -81,4 +90,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+   /* override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+
+    } */
 }

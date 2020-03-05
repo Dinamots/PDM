@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">tmdb</string>
+    <string name="app_name" translatable="false">tmdb</string>
     <string name="upcoming_movies">Upcoming Movies</string>
     <string name="now_playing_movies">Now Playing Movies</string>
     <string name="top_rated_movies">Top Rated Movies</string>
