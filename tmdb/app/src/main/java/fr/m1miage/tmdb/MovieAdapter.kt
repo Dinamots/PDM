@@ -10,7 +10,7 @@ import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
 import kotlinx.android.synthetic.main.movie_element.view.*
 
-open class MovieAdapter(val movies: List<MovieResponse>, val listener: (MovieResponse) -> Unit) :
+open class MovieAdapter(var movies: List<MovieResponse>, val listener: (MovieResponse) -> Unit) :
     Adapter<MovieAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater
@@ -25,7 +25,7 @@ open class MovieAdapter(val movies: List<MovieResponse>, val listener: (MovieRes
         val movie = movies[position]
 
         Picasso.get().load(TMDB_IMAGES_PATH + movie.poster_path).into(holder.movieImg)
-        holder.movieRating.rating = movie.popularity.toFloat()
+        holder.movieRating.rating = movie.vote_average.toFloat() / 2
         holder.movieName.text = movie.title
 
         holder.itemView.setOnClickListener { listener(movie) }

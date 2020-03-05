@@ -1,34 +1,79 @@
 package fr.m1miage.tmdb
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import fr.m1miage.tmdb.api.RetrofitManager
+import fr.m1miage.tmdb.api.model.MovieResponse
+import fr.m1miage.tmdb.api.model.Search
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-
+    val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build())
         setContentView(R.layout.activity_main)
-
-        top_rated_movies.layoutManager = LinearLayoutManager(this)
+        initLayoutManagers()
+        initAdapters()
         initMovieLists()
+        println(adapterMap.toString())
+    }
+
+    private fun initLayoutManagers() {
+        top_rated_movies.layoutManager =
+            LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+        upcoming_movies.layoutManager =
+            LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+        now_playing_movies.layoutManager =
+            LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+        popular_movies.layoutManager =
+            LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+
+    }
+
+    private fun initAdapters() {
+        initAdapter(top_rated_movies, getAdapter())
+        initAdapter(upcoming_movies, getAdapter())
+        initAdapter(now_playing_movies, getAdapter())
+        initAdapter(popular_movies, getAdapter())
+    }
+
+    private fun initAdapter(recyclerView: RecyclerView?, adapter: MovieAdapter) {
+        recyclerView?.adapter = adapter
+        if (recyclerView != null) adapterMap[recyclerView.id] = adapter
+
     }
 
     private fun initMovieLists() {
-        RetrofitManager.tmdbAPI.getNowPlaying()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({})
+        initMovieList(RetrofitManager.tmdbAPI.getNowPlaying(), adapterMap[now_playing_movies.id])
+        initMovieList(RetrofitManager.tmdbAPI.getPopular(), adapterMap[popular_movies.id])
+        initMovieList(RetrofitManager.tmdbAPI.getTopRated(), adapterMap[top_rated_movies.id])
+        initMovieList(RetrofitManager.tmdbAPI.getUpcoming(), adapterMap[upcoming_movies.id])
+
     }
 
-    private fun initAdapter(): MovieAdapter {
+    private fun initMovieList(
+        movieObservable: Observable<Search<MovieResponse>>,
+        movieAdapter: MovieAdapter?
+    ) {
+        val res = movieObservable
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { res ->
+                    movieAdapter?.movies = res.results
+                    movieAdapter?.notifyDataSetChanged()
+                },
+                { err -> err.printStackTrace() }
+            )
+    }
+
+    private fun getAdapter(): MovieAdapter {
         val adapter = MovieAdapter(listOf()) { feature ->
             run {
                 // val intent = Intent(this, AgenceDetailActivity::class.java)
@@ -36,10 +81,6 @@ class MainActivity : AppCompatActivity() {
                 // startActivity(intent)
             }
         }
-        top_rated_movies.adapter = adapter
-        upcoming_movies.adapter = adapter
-        now_playing_movies.adapter = adapter
-        popular_movies.adapter = adapter
         return adapter
     }
 }
