@@ -53,10 +53,22 @@ class HomeFragment : Fragment() {
     }
 
     private fun initAdapters() {
-        initAdapter(root.findViewById(R.id.top_rated_movies), getAdapter(getString(R.string.top_rated_movies)))
-        initAdapter(root.findViewById(R.id.upcoming_movies), getAdapter(getString(R.string.upcoming_movies)))
-        initAdapter(root.findViewById(R.id.now_playing_movies), getAdapter(getString(R.string.now_playing_movies)))
-        initAdapter(root.findViewById(R.id.popular_movies), getAdapter(getString(R.string.popular_movies)))
+        initAdapter(
+            root.findViewById(R.id.top_rated_movies),
+            getAdapter(getString(R.string.top_rated_movies))
+        )
+        initAdapter(
+            root.findViewById(R.id.upcoming_movies),
+            getAdapter(getString(R.string.upcoming_movies))
+        )
+        initAdapter(
+            root.findViewById(R.id.now_playing_movies),
+            getAdapter(getString(R.string.now_playing_movies))
+        )
+        initAdapter(
+            root.findViewById(R.id.popular_movies),
+            getAdapter(getString(R.string.popular_movies))
+        )
     }
 
     private fun initAdapter(recyclerView: RecyclerView?, adapter: MovieAdapter) {
@@ -66,9 +78,22 @@ class HomeFragment : Fragment() {
     }
 
     private fun initMovieLists() {
-        adapterMap.entries.forEach {
-            initMovieList(RetrofitManager.tmdbAPI.getNowPlaying(), it.value)
-        }
+        initMovieList(
+            RetrofitManager.tmdbAPI.getNowPlaying(),
+            adapterMap[root.findViewById<RecyclerView>(R.id.now_playing_movies).id]
+        )
+        initMovieList(
+            RetrofitManager.tmdbAPI.getPopular(),
+            adapterMap[root.findViewById<RecyclerView>(R.id.popular_movies).id]
+        )
+        initMovieList(
+            RetrofitManager.tmdbAPI.getTopRated(),
+            adapterMap[root.findViewById<RecyclerView>(R.id.top_rated_movies).id]
+        )
+        initMovieList(
+            RetrofitManager.tmdbAPI.getUpcoming(),
+            adapterMap[root.findViewById<RecyclerView>(R.id.upcoming_movies).id]
+        )
     }
 
     private fun initMovieList(
