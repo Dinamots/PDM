@@ -7,9 +7,9 @@
     <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow" translatable="false">Slideshow</string>
+    <string name="menu_home">Movie</string>
+    <string name="menu_gallery">TV</string>
+    <string name="menu_slideshow">Favorites</string>
 
     <string name="home_second" translatable="false">Home Second</string>
 
