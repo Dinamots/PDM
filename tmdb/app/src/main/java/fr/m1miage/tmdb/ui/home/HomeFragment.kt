@@ -1,18 +1,17 @@
 package fr.m1miage.tmdb.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import fr.m1miage.tmdb.MovieAdapter
 import fr.m1miage.tmdb.R
-import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.MovieResponse
 
 class HomeFragment : Fragment() {
@@ -104,13 +103,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun getAdapter(headerString: String): MovieAdapter {
-        return MovieAdapter(listOf(), headerString) { feature ->
+        return MovieAdapter(listOf(), headerString, { movieResponse ->
             run {
+                println(movieResponse.title)
                 // val intent = Intent(this, AgenceDetailActivity::class.java)
                 // intent.putExtra("feature", feature)
                 // startActivity(intent)
             }
-        }
+        }, activity?.getPreferences(Context.MODE_PRIVATE))
     }
+
+
 
 }

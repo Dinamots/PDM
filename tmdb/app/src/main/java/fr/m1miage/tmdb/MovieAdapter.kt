@@ -1,23 +1,30 @@
 package fr.m1miage.tmdb
 
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.RatingBar
-import androidx.appcompat.widget.AppCompatImageView
+import android.widget.ToggleButton
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.squareup.picasso.Picasso
 import fr.m1miage.tmdb.api.model.MovieResponse
-import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
+import fr.m1miage.tmdb.listeners.button.FavoriteButtonCheckChangeListener
+import fr.m1miage.tmdb.listeners.button.FavoriteButtonOnClickListener
+import fr.m1miage.tmdb.utils.*
 import kotlinx.android.synthetic.main.movie_element.view.*
+import kotlinx.android.synthetic.main.movie_element.view.movie_element_button_favorite
 import kotlinx.android.synthetic.main.movie_recycler_header.view.*
 
 open class MovieAdapter(
     var movies: List<MovieResponse>,
     var headerStr: String,
-    val listener: (MovieResponse) -> Unit
+    val listener: (MovieResponse) -> Unit,
+    private val preferences: SharedPreferences?
+
 ) : Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -37,16 +44,16 @@ open class MovieAdapter(
         val view: View = LayoutInflater
             .from(parent.context)
             .inflate(getLayoutId(viewType), parent, false)
-        return if(viewType == TYPE_ITEM) ItemViewHolder(view) else HeaderViewHolder(view)
+        return if (viewType == TYPE_ITEM) ItemViewHolder(view) else HeaderViewHolder(view)
     }
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(holder is ItemViewHolder) {
+        if (holder is ItemViewHolder) {
             initItemViewHolder(position, holder)
         }
 
-        if(holder is HeaderViewHolder) {
+        if (holder is HeaderViewHolder) {
             initHeaderViewHolder(holder)
         }
 
@@ -65,14 +72,39 @@ open class MovieAdapter(
             .into(holder.movieImg)
         holder.movieRating.rating = movie.vote_average.toFloat() / 2
         holder.movieName.text = movie.title
-
+        holder.movieImg.setOnClickListener { listener(movie) }
         holder.itemView.setOnClickListener { listener(movie) }
+        holder.favoriteButton.setOnCheckedChangeListener(FavoriteButtonCheckChangeListener())
+        holder.favoriteButton.setOnClickListener(
+            FavoriteButtonOnClickListener(
+                preferences!!,
+                movie
+            )
+        )
+        toggleFavoriteButton(movie, holder)
+
+
     }
 
+    private fun toggleFavoriteButton(
+        movie: MovieResponse,
+        holder: ItemViewHolder
+    ) {
+        if ((getFavorites(preferences).movieIds.find { it == movie.id } != null
+                    && !holder.favoriteButton.isChecked)
+            || (getFavorites(preferences).movieIds.find { it == movie.id } == null
+                    && holder.favoriteButton.isChecked)
+        ) {
+            holder.favoriteButton.toggle()
+        }
+    }
+
+
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var movieImg: AppCompatImageView = itemView.movie_img
+        var movieImg: ImageButton = itemView.movie_img
         var movieRating: RatingBar = itemView.movie_rating
         var movieName: AppCompatTextView = itemView.movie_name
+        val favoriteButton: ToggleButton = itemView.movie_element_button_favorite
     }
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

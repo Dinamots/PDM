@@ -1,8 +1,15 @@
 package fr.m1miage.tmdb
 
+import android.content.Context
 import android.os.Bundle
 import android.os.StrictMode
+import android.util.Log
 import android.view.Menu
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.BounceInterpolator
+import android.view.animation.ScaleAnimation
+import android.widget.CompoundButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -15,10 +22,12 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.movie_element.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +46,9 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         nav_view.setupWithNavController(navController)
+
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -49,4 +61,5 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
 }
