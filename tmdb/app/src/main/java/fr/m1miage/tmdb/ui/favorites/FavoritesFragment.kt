@@ -10,8 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import fr.m1miage.tmdb.FavoriteMovieAdapter
-import fr.m1miage.tmdb.MovieAdapter
+import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie

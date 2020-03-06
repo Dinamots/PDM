@@ -1,4 +1,4 @@
-package fr.m1miage.tmdb
+package fr.m1miage.tmdb.adapter
 
 import android.content.SharedPreferences
 import android.view.LayoutInflater
@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.squareup.picasso.Picasso
+import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.listeners.button.FavoriteButtonCheckChangeListener
 import fr.m1miage.tmdb.utils.*
@@ -46,7 +47,9 @@ open class MovieAdapter(
         val view: View = LayoutInflater
             .from(parent.context)
             .inflate(getLayoutId(viewType), parent, false)
-        return if (viewType == TYPE_ITEM) ItemViewHolder(view) else HeaderViewHolder(view)
+        return if (viewType == TYPE_ITEM) ItemViewHolder(
+            view
+        ) else HeaderViewHolder(view)
     }
 
 
