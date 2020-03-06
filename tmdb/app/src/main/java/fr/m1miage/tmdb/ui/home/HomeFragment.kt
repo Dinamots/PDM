@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import fr.m1miage.tmdb.MovieAdapter
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
+import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 
 class HomeFragment : Fragment() {
     private val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
@@ -98,21 +99,26 @@ class HomeFragment : Fragment() {
         movieAdapter: MovieAdapter?
     ) {
         upcomingMovies.observe(viewLifecycleOwner, Observer {
-            movieAdapter?.movies = it
+            movieAdapter?.movies = it as MutableList<MovieResponse>
         })
     }
 
     private fun getAdapter(headerString: String): MovieAdapter {
-        return MovieAdapter(listOf(), headerString, { movieResponse ->
-            run {
-                println(movieResponse.title)
-                // val intent = Intent(this, AgenceDetailActivity::class.java)
-                // intent.putExtra("feature", feature)
-                // startActivity(intent)
-            }
-        }, activity?.getPreferences(Context.MODE_PRIVATE))
-    }
+        val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
+        return MovieAdapter(
+            mutableListOf(), headerString, preferences, { movieResponse ->
+                run {
+                    println(movieResponse.title)
+                    // val intent = Intent(this, AgenceDetailActivity::class.java)
+                    // intent.putExtra("feature", feature)
+                    // startActivity(intent)
+                }
+            })
+        { movieResponse, _ ->
+            preferences?.addOrRemoveMovie(movieResponse)
+        }
 
+    }
 
 
 }

@@ -5,7 +5,8 @@ import android.view.View
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.utils.FAVORITES_SHARED_KEY
 import fr.m1miage.tmdb.utils.Favorites
-import fr.m1miage.tmdb.utils.getFavorites
+import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
+import fr.m1miage.tmdb.utils.extension.getFavorites
 import fr.m1miage.tmdb.utils.gson
 
 class FavoriteButtonOnClickListener(
@@ -17,27 +18,8 @@ class FavoriteButtonOnClickListener(
     }
 
     private fun onFavoriteButtonClick(movie: MovieResponse) {
-        with(preferences.edit()) {
-            val favorites: Favorites = getFavorites(preferences)
-            editFavorites(favorites, movie.id)
-            this?.putString(
-                FAVORITES_SHARED_KEY,
-                gson.toJson(favorites)
-            )
-            println(favorites.movieIds)
-            this?.apply()
-        }
-    }
+        preferences.addOrRemoveMovie(movie)
 
-    private fun editFavorites(
-        favorites: Favorites,
-        movieId: Int
-    ) {
-        if (favorites.movieIds.find { it == movieId } == null) {
-            favorites.movieIds.add(movieId)
-        } else {
-            favorites.movieIds.remove(movieId)
-        }
     }
 
 

@@ -13,17 +13,19 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.squareup.picasso.Picasso
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.listeners.button.FavoriteButtonCheckChangeListener
-import fr.m1miage.tmdb.listeners.button.FavoriteButtonOnClickListener
 import fr.m1miage.tmdb.utils.*
+import fr.m1miage.tmdb.utils.extension.getFavorites
 import kotlinx.android.synthetic.main.movie_element.view.*
 import kotlinx.android.synthetic.main.movie_element.view.movie_element_button_favorite
 import kotlinx.android.synthetic.main.movie_recycler_header.view.*
 
 open class MovieAdapter(
-    var movies: List<MovieResponse>,
-    var headerStr: String,
+    var movies: MutableList<MovieResponse>,
+    var headerStr: String?,
+    private val preferences: SharedPreferences?,
     val listener: (MovieResponse) -> Unit,
-    private val preferences: SharedPreferences?
+    val favoriteListener: (MovieResponse, MovieAdapter) -> Unit
+
 
 ) : Adapter<RecyclerView.ViewHolder>() {
 
@@ -33,7 +35,7 @@ open class MovieAdapter(
     }
 
     override fun getItemViewType(position: Int): Int =
-        if (position == 0) TYPE_HEADER else TYPE_ITEM
+        if (position == 0 && headerStr != null) TYPE_HEADER else TYPE_ITEM
 
     override fun getItemCount(): Int = movies.size
 
@@ -63,7 +65,7 @@ open class MovieAdapter(
         holder.textView.text = headerStr
     }
 
-    private fun initItemViewHolder(position: Int, holder: ItemViewHolder) {
+    open fun initItemViewHolder(position: Int, holder: ItemViewHolder) {
         val movie = movies[position]
 
         Picasso.get()
@@ -75,12 +77,8 @@ open class MovieAdapter(
         holder.movieImg.setOnClickListener { listener(movie) }
         holder.itemView.setOnClickListener { listener(movie) }
         holder.favoriteButton.setOnCheckedChangeListener(FavoriteButtonCheckChangeListener())
-        holder.favoriteButton.setOnClickListener(
-            FavoriteButtonOnClickListener(
-                preferences!!,
-                movie
-            )
-        )
+        holder.favoriteButton.setOnClickListener { favoriteListener(movie,this) }
+
         toggleFavoriteButton(movie, holder)
 
 
@@ -90,14 +88,17 @@ open class MovieAdapter(
         movie: MovieResponse,
         holder: ItemViewHolder
     ) {
-        if ((getFavorites(preferences).movieIds.find { it == movie.id } != null
+        val favorites: Favorites? = preferences?.getFavorites()
+        if ((favorites?.movies?.find { it.id == movie.id } != null
                     && !holder.favoriteButton.isChecked)
-            || (getFavorites(preferences).movieIds.find { it == movie.id } == null
+            || (favorites?.movies?.find { it.id == movie.id } == null
                     && holder.favoriteButton.isChecked)
         ) {
             holder.favoriteButton.toggle()
         }
     }
+
+
 
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

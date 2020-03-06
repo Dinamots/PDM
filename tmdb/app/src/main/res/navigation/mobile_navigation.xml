@@ -37,7 +37,7 @@
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="fr.m1miage.tmdb.ui.slideshow.SlideshowFragment"
+        android:name="fr.m1miage.tmdb.ui.favorites.FavoritesFragment"
         android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_favorites" />
 </navigation>
