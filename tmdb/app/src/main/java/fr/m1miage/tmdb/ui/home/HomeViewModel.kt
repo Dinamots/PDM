@@ -1,8 +1,10 @@
 package fr.m1miage.tmdb.ui.home
 
+import android.os.Build.VERSION_CODES.M
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import fr.m1miage.tmdb.MovieAdapter
 import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.api.model.Search
@@ -10,6 +12,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 
 class HomeViewModel : ViewModel() {
+
     private val upcomingMovies by lazy {
         getLiveData(RetrofitManager.tmdbAPI.getUpcoming())
     }
@@ -65,5 +68,7 @@ class HomeViewModel : ViewModel() {
         value = "This is home Fragment"
     }
     val text: LiveData<String> = _text
+
+
 
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,7 +17,7 @@ import fr.m1miage.tmdb.api.model.MovieResponse
 
 class HomeFragment : Fragment() {
     private val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var root: View
 
     override fun onCreateView(
@@ -64,7 +65,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun initAdapter(recyclerView: RecyclerView?, adapter: MovieAdapter) {
-        recyclerView?.adapter = adapter
+        if (recyclerView?.adapter == null) {
+            recyclerView?.adapter = adapter
+        }
         if (recyclerView != null) adapterMap[recyclerView.id] = adapter
 
     }
