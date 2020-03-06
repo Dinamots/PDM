@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">tmdb</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="menu_home">Film</string>
     <string name="upcoming_movies">Prochainement</string>
     <string name="now_playing_movies">En salle</string>
     <string name="top_rated_movies">Mieux notés</string>
     <string name="popular_movies">Populaires</string>
+    <string name="menu_gallery">TV</string>
+    <string name="menu_slideshow">Favoris</string>
+
 </resources>
