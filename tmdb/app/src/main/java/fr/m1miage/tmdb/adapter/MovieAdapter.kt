@@ -16,6 +16,7 @@ import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.listeners.button.FavoriteButtonCheckChangeListener
 import fr.m1miage.tmdb.utils.*
 import fr.m1miage.tmdb.utils.extension.getFavorites
+import fr.m1miage.tmdb.utils.extension.isFavoriteMovie
 import kotlinx.android.synthetic.main.movie_element.view.*
 import kotlinx.android.synthetic.main.movie_element.view.movie_element_button_favorite
 import kotlinx.android.synthetic.main.movie_recycler_header.view.*
@@ -33,10 +34,13 @@ open class MovieAdapter(
     companion object {
         const val TYPE_HEADER: Int = 0
         const val TYPE_ITEM: Int = 1
+        const val TYPE_LOADING: Int = 2
     }
 
-    override fun getItemViewType(position: Int): Int =
-        if (position == 0 && headerStr != null) TYPE_HEADER else TYPE_ITEM
+    override fun getItemViewType(position: Int): Int {
+        return if (position == 0 && headerStr != null) TYPE_HEADER else TYPE_ITEM
+
+    }
 
     override fun getItemCount(): Int = movies.size
 
@@ -47,9 +51,7 @@ open class MovieAdapter(
         val view: View = LayoutInflater
             .from(parent.context)
             .inflate(getLayoutId(viewType), parent, false)
-        return if (viewType == TYPE_ITEM) ItemViewHolder(
-            view
-        ) else HeaderViewHolder(view)
+        return if (viewType == TYPE_ITEM) ItemViewHolder(view) else HeaderViewHolder(view)
     }
 
 
@@ -80,11 +82,9 @@ open class MovieAdapter(
         holder.movieImg.setOnClickListener { listener(movie) }
         holder.itemView.setOnClickListener { listener(movie) }
         holder.favoriteButton.setOnCheckedChangeListener(FavoriteButtonCheckChangeListener())
-        holder.favoriteButton.setOnClickListener { favoriteListener(movie,this) }
+        holder.favoriteButton.setOnClickListener { favoriteListener(movie, this) }
 
         toggleFavoriteButton(movie, holder)
-
-
     }
 
     private fun toggleFavoriteButton(
@@ -100,8 +100,6 @@ open class MovieAdapter(
             holder.favoriteButton.toggle()
         }
     }
-
-
 
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

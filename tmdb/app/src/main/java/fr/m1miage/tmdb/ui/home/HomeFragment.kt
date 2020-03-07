@@ -14,6 +14,7 @@ import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
+import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {
     private val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
@@ -29,37 +30,41 @@ class HomeFragment : Fragment() {
         initLayoutManagers()
         initAdapters()
         initMovieLists()
+        val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
+        preferences?.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
+            println(key)
+        }
         return root
     }
 
 
     private fun initLayoutManagers() {
-        root.findViewById<RecyclerView>(R.id.top_rated_movies)?.layoutManager =
+        root.top_rated_movies?.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        root.findViewById<RecyclerView>(R.id.upcoming_movies)?.layoutManager =
+        root.upcoming_movies?.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        root.findViewById<RecyclerView>(R.id.now_playing_movies)?.layoutManager =
+        root.now_playing_movies?.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        root.findViewById<RecyclerView>(R.id.popular_movies)?.layoutManager =
+        root.popular_movies?.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
     }
 
     private fun initAdapters() {
         initAdapter(
-            root.findViewById(R.id.top_rated_movies),
+            root.top_rated_movies,
             getAdapter(getString(R.string.top_rated_movies))
         )
         initAdapter(
-            root.findViewById(R.id.upcoming_movies),
+            root.upcoming_movies,
             getAdapter(getString(R.string.upcoming_movies))
         )
         initAdapter(
-            root.findViewById(R.id.now_playing_movies),
+            root.now_playing_movies,
             getAdapter(getString(R.string.now_playing_movies))
         )
         initAdapter(
-            root.findViewById(R.id.popular_movies),
+            root.popular_movies,
             getAdapter(getString(R.string.popular_movies))
         )
     }
@@ -75,30 +80,30 @@ class HomeFragment : Fragment() {
     private fun initMovieLists() {
         initMovieList(
             homeViewModel.getNowPlayingMovies(),
-            adapterMap[root.findViewById<RecyclerView>(R.id.now_playing_movies).id]
+            adapterMap[root.now_playing_movies.id]
         )
 
         initMovieList(
             homeViewModel.getPopularMovies(),
-            adapterMap[root.findViewById<RecyclerView>(R.id.popular_movies).id]
+            adapterMap[root.popular_movies.id]
         )
 
         initMovieList(
             homeViewModel.getTopRatedMovies(),
-            adapterMap[root.findViewById<RecyclerView>(R.id.top_rated_movies).id]
+            adapterMap[root.top_rated_movies.id]
         )
 
         initMovieList(
             homeViewModel.getUpcomingMovies(),
-            adapterMap[root.findViewById<RecyclerView>(R.id.upcoming_movies).id]
+            adapterMap[root.upcoming_movies.id]
         )
     }
 
     private fun initMovieList(
-        upcomingMovies: LiveData<List<MovieResponse>>,
+        movies: LiveData<List<MovieResponse>>,
         movieAdapter: MovieAdapter?
     ) {
-        upcomingMovies.observe(viewLifecycleOwner, Observer {
+        movies.observe(viewLifecycleOwner, Observer {
             movieAdapter?.movies = it as MutableList<MovieResponse>
         })
     }
