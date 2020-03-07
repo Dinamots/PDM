@@ -1,11 +1,10 @@
 package fr.m1miage.tmdb
 
-import android.app.SearchManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -34,51 +33,61 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_search
             ), drawer_layout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         nav_view.setupWithNavController(navController)
-
 
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         // SearchView((baseContext as MainActivity).supportActionBar?.themedContext ?: baseContext)
-        val searchView: SearchView = menu.findItem(R.id.search).actionView as SearchView
-        searchView.setOnQueryTextListener (object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                println("ici")
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                println("la")
-                return false
-            }
-        })
+        val search = menu.findItem(R.id.search)
+        val searchView: SearchView = search.actionView as SearchView
+        searchView.isIconified = false
+        searchView.setOnCloseListener { true }
+        setOnActionExpandListenerOnSearchItem(search)
+        setQueryListenerOnSearchView(searchView)
         return true
     }
 
-    /* override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater?) {
-        val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext ?: context)
-        menu.findItem(R.id.action_search).apply {
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
-            actionView = searchView
-        }
-
+    private fun setQueryListenerOnSearchView(searchView: SearchView) {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
+                println("Submit")
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
+                println("QueryTextChange")
                 return false
             }
         })
-        searchView.setOnClickListener {view ->  }
-    } */
+    }
+
+    private fun setOnActionExpandListenerOnSearchItem(search: MenuItem) {
+        search.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                navigate(R.id.nav_search)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                navigate(R.id.nav_home)
+                return true
+            }
+
+        })
+    }
+
+
+
+    private fun navigate(destinationId: Int) {
+        val navController = findNavController(R.id.nav_host_fragment)
+        navController.navigate(destinationId)
+    }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
