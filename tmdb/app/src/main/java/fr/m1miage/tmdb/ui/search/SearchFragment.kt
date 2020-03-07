@@ -88,7 +88,9 @@ class SearchFragment : Fragment() {
             mutableListOf(),
             null,
             preferences,
-            { }) { movieResponse, _ ->
+            {},
+            { intent -> startActivity(intent) })
+        { movieResponse, _ ->
             preferences?.addOrRemoveMovie(movieResponse)
         }
     }

@@ -1,6 +1,7 @@
 package fr.m1miage.tmdb.ui.favorites
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -36,6 +37,7 @@ class FavoritesFragment : Fragment() {
                 null,
                 sharedPreferences,
                 { movieResponse -> onItemClick(movieResponse) },
+                { intent -> startActivity(intent) },
                 { movieResponse, adapter ->
                     onFavoriteButtonClick(sharedPreferences, movieResponse, adapter)
                 }

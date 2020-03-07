@@ -1,5 +1,6 @@
 package fr.m1miage.tmdb.adapter
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
@@ -7,25 +8,29 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.RatingBar
 import android.widget.ToggleButton
+import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.squareup.picasso.Picasso
 import fr.m1miage.tmdb.R
+import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.listeners.button.FavoriteButtonCheckChangeListener
 import fr.m1miage.tmdb.utils.*
 import fr.m1miage.tmdb.utils.extension.getFavorites
-import fr.m1miage.tmdb.utils.extension.isFavoriteMovie
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.movie_element.view.*
 import kotlinx.android.synthetic.main.movie_element.view.movie_element_button_favorite
 import kotlinx.android.synthetic.main.movie_recycler_header.view.*
+import java.util.*
 
 open class MovieAdapter(
     var movies: MutableList<MovieResponse>,
     var headerStr: String?,
     private val preferences: SharedPreferences?,
     val listener: (MovieResponse) -> Unit,
+    val shareListener: (Intent) -> Unit,
     val favoriteListener: (MovieResponse, MovieAdapter) -> Unit
 
 
@@ -83,8 +88,16 @@ open class MovieAdapter(
         holder.itemView.setOnClickListener { listener(movie) }
         holder.favoriteButton.setOnCheckedChangeListener(FavoriteButtonCheckChangeListener())
         holder.favoriteButton.setOnClickListener { favoriteListener(movie, this) }
-
+        holder.shareButton.setOnClickListener { shareListener(getShareIntent(movie)) }
         toggleFavoriteButton(movie, holder)
+    }
+
+    private fun getShareIntent(movieResponse: MovieResponse): Intent {
+        return Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, movieResponse.title)
+            type = "text/plain"
+        }
     }
 
     private fun toggleFavoriteButton(
@@ -107,6 +120,7 @@ open class MovieAdapter(
         var movieRating: RatingBar = itemView.movie_rating
         var movieName: AppCompatTextView = itemView.movie_name
         val favoriteButton: ToggleButton = itemView.movie_element_button_favorite
+        val shareButton: AppCompatButton = itemView.share_button
     }
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

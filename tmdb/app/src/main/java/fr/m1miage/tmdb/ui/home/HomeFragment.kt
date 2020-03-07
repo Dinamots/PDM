@@ -1,6 +1,7 @@
 package fr.m1miage.tmdb.ui.home
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,7 @@ class HomeFragment : Fragment() {
         preferences?.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
             println(key)
         }
+
         return root
     }
 
@@ -111,14 +113,9 @@ class HomeFragment : Fragment() {
     private fun getAdapter(headerString: String): MovieAdapter {
         val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
         return MovieAdapter(
-            mutableListOf(), headerString, preferences, { movieResponse ->
-                run {
-                    println(movieResponse.title)
-                    // val intent = Intent(this, AgenceDetailActivity::class.java)
-                    // intent.putExtra("feature", feature)
-                    // startActivity(intent)
-                }
-            })
+            mutableListOf(), headerString, preferences,
+            { movieResponse -> println(movieResponse.title) },
+            { intent -> startActivity(intent) })
         { movieResponse, _ ->
             preferences?.addOrRemoveMovie(movieResponse)
         }
