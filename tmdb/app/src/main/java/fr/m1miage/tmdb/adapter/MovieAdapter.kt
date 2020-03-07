@@ -85,10 +85,6 @@ open class MovieAdapter(
         holder.favoriteButton.setOnClickListener { favoriteListener(movie, this) }
 
         toggleFavoriteButton(movie, holder)
-        /* preferences?.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
-        println("ICI" + movie.title)
-        toggleFavoriteButton(movie, holder)
-        } */
     }
 
     private fun toggleFavoriteButton(
