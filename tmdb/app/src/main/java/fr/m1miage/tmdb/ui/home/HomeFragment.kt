@@ -100,10 +100,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun initMovieList(
-        upcomingMovies: LiveData<List<MovieResponse>>,
+        movies: LiveData<List<MovieResponse>>,
         movieAdapter: MovieAdapter?
     ) {
-        upcomingMovies.observe(viewLifecycleOwner, Observer {
+        movies.observe(viewLifecycleOwner, Observer {
             movieAdapter?.movies = it as MutableList<MovieResponse>
         })
     }

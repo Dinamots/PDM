@@ -21,6 +21,6 @@ interface TmdbAPI {
     fun getNowPlaying(): Observable<Search<MovieResponse>>
 
     @GET("search/movie")
-    fun searchMovies(@Query("query") query: String): Observable<Search<MovieResponse>>
+    fun searchMovies(@Query("query") query: String, @Query("page") page: Int): Observable<Search<MovieResponse>>
 
 }
