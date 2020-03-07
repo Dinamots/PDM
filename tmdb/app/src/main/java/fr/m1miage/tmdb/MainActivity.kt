@@ -6,20 +6,25 @@ import android.os.StrictMode
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import fr.m1miage.tmdb.ui.search.SearchViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-
+    val searchViewModel: SearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,12 +61,11 @@ class MainActivity : AppCompatActivity() {
     private fun setQueryListenerOnSearchView(searchView: SearchView) {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                println("Submit")
+                searchViewModel.searchSting.value = query
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                println("QueryTextChange")
                 return false
             }
         })
@@ -71,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         search.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 navigate(R.id.nav_search)
+                item?.isChecked = true
                 return true
             }
 
