@@ -58,7 +58,7 @@ class HomeViewModel : ViewModel() {
 
         val disposable = observable
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { res -> liveData.value = res.results }
+            .subscribe({ res -> liveData.value = res.results }, { error -> println(error) })
     }
 
 
@@ -66,7 +66,6 @@ class HomeViewModel : ViewModel() {
         value = "This is home Fragment"
     }
     val text: LiveData<String> = _text
-
 
 
 }

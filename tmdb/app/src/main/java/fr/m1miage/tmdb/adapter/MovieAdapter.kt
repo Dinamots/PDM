@@ -34,10 +34,13 @@ open class MovieAdapter(
     companion object {
         const val TYPE_HEADER: Int = 0
         const val TYPE_ITEM: Int = 1
+        const val TYPE_LOADING: Int = 2
     }
 
-    override fun getItemViewType(position: Int): Int =
-        if (position == 0 && headerStr != null) TYPE_HEADER else TYPE_ITEM
+    override fun getItemViewType(position: Int): Int {
+        return if (position == 0 && headerStr != null) TYPE_HEADER else TYPE_ITEM
+
+    }
 
     override fun getItemCount(): Int = movies.size
 
