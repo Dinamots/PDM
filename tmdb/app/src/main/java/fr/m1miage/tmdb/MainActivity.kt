@@ -1,28 +1,21 @@
 package fr.m1miage.tmdb
 
+import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
-import android.util.Log
 import android.view.Menu
-import android.view.View
-import android.view.animation.Animation
-import android.view.animation.BounceInterpolator
-import android.view.animation.ScaleAnimation
-import android.widget.CompoundButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
+import android.widget.SearchView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.movie_element.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,18 +41,55 @@ class MainActivity : AppCompatActivity() {
         nav_view.setupWithNavController(navController)
 
 
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
+        menuInflater.inflate(R.menu.menu, menu)
+        // SearchView((baseContext as MainActivity).supportActionBar?.themedContext ?: baseContext)
+        val searchView: SearchView = menu.findItem(R.id.search).actionView as SearchView
+        searchView.setOnQueryTextListener (object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                println("ici")
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                println("la")
+                return false
+            }
+        })
         return true
     }
+
+    /* override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater?) {
+        val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext ?: context)
+        menu.findItem(R.id.action_search).apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
+            actionView = searchView
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                return false
+            }
+        })
+        searchView.setOnClickListener {view ->  }
+    } */
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        println(intent)
+    }
+
 
 }
