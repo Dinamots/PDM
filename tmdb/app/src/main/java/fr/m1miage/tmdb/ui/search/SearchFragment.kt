@@ -13,6 +13,7 @@ import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.adapter.PaginationListener
 import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
+import fr.m1miage.tmdb.utils.extension.getFavorites
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.search_fragment.*
 
@@ -88,8 +89,10 @@ class SearchFragment : Fragment() {
             mutableListOf(),
             null,
             preferences,
-            { }) { movieResponse, _ ->
+            {})
+        { movieResponse, _ ->
             preferences?.addOrRemoveMovie(movieResponse)
+            println(preferences?.getFavorites()?.movies)
         }
     }
 }

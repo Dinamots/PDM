@@ -17,7 +17,7 @@ import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {
-    private val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
+    private val adapterMap: HashMap<kotlin.Int, MovieAdapter> = HashMap()
     private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var root: View
 
@@ -34,6 +34,7 @@ class HomeFragment : Fragment() {
         preferences?.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
             println(key)
         }
+
         return root
     }
 
@@ -111,14 +112,8 @@ class HomeFragment : Fragment() {
     private fun getAdapter(headerString: String): MovieAdapter {
         val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
         return MovieAdapter(
-            mutableListOf(), headerString, preferences, { movieResponse ->
-                run {
-                    println(movieResponse.title)
-                    // val intent = Intent(this, AgenceDetailActivity::class.java)
-                    // intent.putExtra("feature", feature)
-                    // startActivity(intent)
-                }
-            })
+            mutableListOf(), headerString, preferences,
+            { movieResponse -> println(movieResponse.title) })
         { movieResponse, _ ->
             preferences?.addOrRemoveMovie(movieResponse)
         }

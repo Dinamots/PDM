@@ -5,6 +5,7 @@ import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.api.model.Search
 import io.reactivex.Observable
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TmdbAPI {
@@ -21,6 +22,12 @@ interface TmdbAPI {
     fun getNowPlaying(): Observable<Search<MovieResponse>>
 
     @GET("search/movie")
-    fun searchMovies(@Query("query") query: String, @Query("page") page: Int): Observable<Search<MovieResponse>>
+    fun searchMovies(
+        @Query("query") query: String,
+        @Query("page") page: kotlin.Int
+    ): Observable<Search<MovieResponse>>
+
+    @GET("movie/{id}")
+    fun getMovie(@Path("id") id: Long): Observable<Movie>
 
 }

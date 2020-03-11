@@ -61,11 +61,4 @@ class HomeViewModel : ViewModel() {
             .subscribe({ res -> liveData.value = res.results }, { error -> println(error) })
     }
 
-
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
-
-
 }
