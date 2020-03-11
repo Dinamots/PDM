@@ -1,6 +1,7 @@
 package fr.m1miage.tmdb.api.model
 
 import java.io.Serializable
+import kotlin.Int
 
 data class Search<T>(
     val page: Int?,

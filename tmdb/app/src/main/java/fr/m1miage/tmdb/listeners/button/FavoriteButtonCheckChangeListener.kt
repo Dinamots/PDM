@@ -5,7 +5,7 @@ import android.view.animation.BounceInterpolator
 import android.view.animation.ScaleAnimation
 import android.widget.CompoundButton
 
-class FavoriteButtonCheckChangeListener() : CompoundButton.OnCheckedChangeListener {
+class FavoriteButtonCheckChangeListener : CompoundButton.OnCheckedChangeListener {
 
     companion object {
         private fun getScaleAnimation(): ScaleAnimation {

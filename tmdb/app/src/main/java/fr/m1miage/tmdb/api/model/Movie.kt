@@ -2,6 +2,7 @@ package fr.m1miage.tmdb.api.model
 
 import java.io.Serializable
 import java.util.*
+import kotlin.Int
 
 data class Movie(
     val adult: Boolean,

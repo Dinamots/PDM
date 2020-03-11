@@ -14,16 +14,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.squareup.picasso.Picasso
 import fr.m1miage.tmdb.R
-import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.listeners.button.FavoriteButtonCheckChangeListener
 import fr.m1miage.tmdb.utils.*
 import fr.m1miage.tmdb.utils.extension.getFavorites
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.movie_element.view.*
 import kotlinx.android.synthetic.main.movie_element.view.movie_element_button_favorite
 import kotlinx.android.synthetic.main.movie_recycler_header.view.*
-import java.util.*
 
 open class MovieAdapter(
     var movies: MutableList<MovieResponse>,
@@ -37,22 +34,22 @@ open class MovieAdapter(
 ) : Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
-        const val TYPE_HEADER: Int = 0
-        const val TYPE_ITEM: Int = 1
-        const val TYPE_LOADING: Int = 2
+        const val TYPE_HEADER: kotlin.Int = 0
+        const val TYPE_ITEM: kotlin.Int = 1
+        const val TYPE_LOADING: kotlin.Int = 2
     }
 
-    override fun getItemViewType(position: Int): Int {
+    override fun getItemViewType(position: kotlin.Int): kotlin.Int {
         return if (position == 0 && headerStr != null) TYPE_HEADER else TYPE_ITEM
 
     }
 
-    override fun getItemCount(): Int = movies.size
+    override fun getItemCount(): kotlin.Int = movies.size
 
-    private fun getLayoutId(viewType: Int): Int =
+    private fun getLayoutId(viewType: kotlin.Int): kotlin.Int =
         if (viewType == TYPE_HEADER) R.layout.movie_recycler_header else R.layout.movie_element
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: kotlin.Int): RecyclerView.ViewHolder {
         val view: View = LayoutInflater
             .from(parent.context)
             .inflate(getLayoutId(viewType), parent, false)
@@ -60,7 +57,7 @@ open class MovieAdapter(
     }
 
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: kotlin.Int) {
         if (holder is ItemViewHolder) {
             initItemViewHolder(position, holder)
         }
@@ -75,7 +72,7 @@ open class MovieAdapter(
         holder.textView.text = headerStr
     }
 
-    open fun initItemViewHolder(position: Int, holder: ItemViewHolder) {
+    open fun initItemViewHolder(position: kotlin.Int, holder: ItemViewHolder) {
         val movie = movies[position]
 
         Picasso.get()

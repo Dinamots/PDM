@@ -1,7 +1,6 @@
 package fr.m1miage.tmdb.ui.home
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +17,7 @@ import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {
-    private val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
+    private val adapterMap: HashMap<kotlin.Int, MovieAdapter> = HashMap()
     private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var root: View
 

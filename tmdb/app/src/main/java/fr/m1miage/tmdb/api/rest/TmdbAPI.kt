@@ -24,7 +24,7 @@ interface TmdbAPI {
     @GET("search/movie")
     fun searchMovies(
         @Query("query") query: String,
-        @Query("page") page: Int
+        @Query("page") page: kotlin.Int
     ): Observable<Search<MovieResponse>>
 
     @GET("movie/{id}")
