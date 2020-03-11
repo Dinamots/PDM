@@ -36,7 +36,6 @@ class FavoritesFragment : Fragment() {
                 null,
                 sharedPreferences,
                 { movieResponse -> onItemClick(movieResponse) },
-                { intent -> startActivity(intent) },
                 { movieResponse, adapter ->
                     onFavoriteButtonClick(sharedPreferences, movieResponse, adapter)
                 }

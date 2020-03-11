@@ -27,7 +27,6 @@ open class MovieAdapter(
     var headerStr: String?,
     private val preferences: SharedPreferences?,
     val listener: (MovieResponse) -> Unit,
-    val shareListener: (Intent) -> Unit,
     val favoriteListener: (MovieResponse, MovieAdapter) -> Unit
 
 
@@ -85,7 +84,6 @@ open class MovieAdapter(
         holder.itemView.setOnClickListener { listener(movie) }
         holder.favoriteButton.setOnCheckedChangeListener(FavoriteButtonCheckChangeListener())
         holder.favoriteButton.setOnClickListener { favoriteListener(movie, this) }
-        holder.shareButton.setOnClickListener { shareListener(getShareIntent(movie)) }
         toggleFavoriteButton(movie, holder)
     }
 
@@ -117,7 +115,6 @@ open class MovieAdapter(
         var movieRating: RatingBar = itemView.movie_rating
         var movieName: AppCompatTextView = itemView.movie_name
         val favoriteButton: ToggleButton = itemView.movie_element_button_favorite
-        val shareButton: AppCompatButton = itemView.share_button
     }
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

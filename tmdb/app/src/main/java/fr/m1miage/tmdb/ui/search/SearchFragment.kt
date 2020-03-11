@@ -89,8 +89,7 @@ class SearchFragment : Fragment() {
             mutableListOf(),
             null,
             preferences,
-            {},
-            { intent -> startActivity(intent) })
+            {})
         { movieResponse, _ ->
             preferences?.addOrRemoveMovie(movieResponse)
             println(preferences?.getFavorites()?.movies)

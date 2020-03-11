@@ -113,8 +113,7 @@ class HomeFragment : Fragment() {
         val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
         return MovieAdapter(
             mutableListOf(), headerString, preferences,
-            { movieResponse -> println(movieResponse.title) },
-            { intent -> startActivity(intent) })
+            { movieResponse -> println(movieResponse.title) })
         { movieResponse, _ ->
             preferences?.addOrRemoveMovie(movieResponse)
         }
