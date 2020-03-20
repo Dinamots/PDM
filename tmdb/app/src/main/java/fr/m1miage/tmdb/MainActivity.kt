@@ -17,6 +17,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import fr.m1miage.tmdb.activities.MovieDetailActivity
 import fr.m1miage.tmdb.ui.home.HomeFragment
 import fr.m1miage.tmdb.ui.search.SearchViewModel
 import kotlinx.android.synthetic.main.activity_main.*
