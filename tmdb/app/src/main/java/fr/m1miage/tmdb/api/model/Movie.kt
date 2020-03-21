@@ -24,6 +24,7 @@ data class Movie(
     val runtime: Int,
     val spoken_languages: List<SpokenLanguage>,
     val status: String,
+    val title: String,
     val tagline: String,
     val video: Boolean,
     val vote_average: Double,
