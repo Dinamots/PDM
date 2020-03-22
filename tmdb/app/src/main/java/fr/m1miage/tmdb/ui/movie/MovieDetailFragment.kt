@@ -1,7 +1,7 @@
 package fr.m1miage.tmdb.ui.movie
 
 import android.content.Context
-import android.content.SharedPreferences
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Layout.JUSTIFICATION_MODE_INTER_WORD
@@ -13,8 +13,6 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.youtube.player.YouTubeInitializationResult
-import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerSupportFragment
 import com.squareup.picasso.Picasso
 import fr.m1miage.tmdb.R
@@ -23,6 +21,7 @@ import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.Movie
 import fr.m1miage.tmdb.listeners.YoutubeOnInitializedListener
 import fr.m1miage.tmdb.utils.GOOFLE_API_KEY
+import fr.m1miage.tmdb.utils.IMDB_PATH
 import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import fr.m1miage.tmdb.utils.extension.isFavoriteMovie
@@ -53,7 +52,9 @@ class MovieDetailFragment : Fragment() {
 
         val transaction: FragmentTransaction = childFragmentManager.beginTransaction()
         transaction.add(R.id.youtube_player_fragment, youTubePlayerFragment as Fragment).commit()
-        val initializer = YoutubeOnInitializedListener(movie)
+        val initializer = YoutubeOnInitializedListener(movie) {
+            if (!it) trailer_button.visibility = View.GONE
+        }
         youTubePlayerFragment.initialize(GOOFLE_API_KEY, initializer)
         youtube_player_fragment.visibility = View.GONE
     }
@@ -79,6 +80,31 @@ class MovieDetailFragment : Fragment() {
         initText(movie)
         initGenres(movie)
         initFavorite(movie)
+        initTrailerButton()
+        initShareButton(movie)
+    }
+
+    private fun initShareButton(movie: Movie) {
+        movie_share_button.setOnClickListener {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "${movie.title} \n" +
+                            " ${movie.homepage} \n" +
+                            " ${IMDB_PATH + movie.imdb_id} \n" +
+                            " ${movie.vote_average / 2} / 5 "
+                )
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
+
+    }
+
+    private fun initTrailerButton() {
         trailer_button.setOnClickListener {
             when (youtube_player_fragment.visibility) {
                 View.GONE -> youtube_player_fragment.visibility = View.VISIBLE

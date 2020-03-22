@@ -14,6 +14,7 @@ const val GOOFLE_API_KEY = "AIzaSyArQzig__mI5KngXeX5Zire4RZl74X739U"
 const val TMDB_IMAGES_PATH = "https://image.tmdb.org/t/p/original"
 const val FAVORITES_SHARED_KEY = "FAVORITES"
 const val MOVIE_ID_EXTRAS_KEY = "MOVIE_ID"
+const val IMDB_PATH = "https://www.imdb.com/title/"
 data class Favorites (
      var movies: MutableList<MovieResponse>
 )
