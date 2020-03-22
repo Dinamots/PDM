@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     tools:context=".ui.movie.MovieDetailFragment">
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
@@ -29,7 +28,7 @@
                 tools:ignore="ContentDescription" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
@@ -41,7 +40,8 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/movie_genres"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal" />
 
                 <TextView
 
@@ -71,7 +71,7 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:padding="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_movie_layout">
 
@@ -79,28 +79,40 @@
                 android:id="@+id/movie_img"
                 android:layout_width="150dp"
                 android:layout_height="200dp"
-                android:contentDescription="MovieImg"
-                android:padding="10dp">
+                android:contentDescription="MovieImg">
 
             </ImageView>
-            <TextView
-                android:id="@+id/tagline"
-                android:text="tagline"
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/movie_img"
-                android:layout_toEndOf="@+id/movie_img" />
-            <TextView
-                android:id="@+id/overview"
-                android:text="Overview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tagline"
-                android:layout_toRightOf="@+id/movie_img"
                 android:layout_toEndOf="@+id/movie_img"
-                />
+                android:layout_toRightOf="@+id/movie_img"
+                android:orientation="vertical"
+                android:paddingLeft="10dp">
+
+                <TextView
+                    android:id="@+id/tagline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="tagline"
+                    android:textSize="18sp"
+                    android:textStyle="bold|italic" />
+
+                <TextView
+                    android:id="@+id/overview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tagline"
+                    android:text="Overview"
+                    android:textSize="15sp"
+
+                    />
+            </LinearLayout>
+
         </RelativeLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+
+</ScrollView>

@@ -7,12 +7,14 @@ import android.media.effect.EffectContext
 import android.media.effect.EffectFactory
 import android.os.Build
 import android.os.Bundle
+import android.text.Layout.JUSTIFICATION_MODE_INTER_WORD
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -52,7 +54,9 @@ class MovieDetailFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initGenres()
+        println("LAAA")
         movieDetailViewModel.movieId.observe(viewLifecycleOwner, Observer {
+            println("ID = $it")
             RetrofitManager.tmdbAPI.getMovie(it.toLong()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { movie -> initView(movie) },
@@ -62,27 +66,25 @@ class MovieDetailFragment : Fragment() {
     }
 
     private fun initView(movie: Movie) {
+        println(movie)
         getMovieImg(movie)
         getMovieBackground(movie)
         movie_title.text = movie.title
         overview.text = movie.overview
+        /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            overview.justificationMode = JUSTIFICATION_MODE_INTER_WORD
+        } */
         tagline.text = movie.tagline
+        movie_genres.layoutManager =
+            GridLayoutManager(context, if (movie.genres.size >= 3) 3 else movie.genres.size)
         genreAdapter.genres = movie.genres
         genreAdapter.notifyDataSetChanged()
     }
 
     private fun initGenres() {
         movie_genres.apply {
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
-
-            // use a linear layout manager
-            layoutManager = GridLayoutManager(context, 4)
-
-            // specify an viewAdapter (see also next example)
             adapter = genreAdapter
-
         }
     }
 
