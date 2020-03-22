@@ -13,12 +13,12 @@
 
 
         <RelativeLayout
+            android:id="@+id/header_movie_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/header_movie_layout"
-            app:layout_constraintTop_toTopOf="parent"
+            android:background="#000000"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:background="#000000" >
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/movie_backdrop"
@@ -31,15 +31,26 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_margin="10dp"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/movie_genres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
                 <TextView
 
                     android:id="@+id/movie_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="aaaaaaaaa"
+                    android:text="Movie Title"
+                    android:textColor="#FFFFFF"
+                    android:textSize="25sp"
                     app:layout_constraintBottom_toTopOf="@+id/trailer_button"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent" />
@@ -48,7 +59,7 @@
                     android:id="@+id/trailer_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="bbbbbbb"
+                    android:text="Trailer "
                     app:layout_constraintBottom_toTopOf="@+id/movie_img"
 
                     app:layout_constraintTop_toBottomOf="parent" />
@@ -57,18 +68,38 @@
 
         </RelativeLayout>
 
-        <ImageView
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
 
-            android:id="@+id/movie_img"
-            android:layout_width="150dp"
-            android:layout_height="200dp"
-            android:contentDescription="MovieImg"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_movie_layout">
 
-        </ImageView>
+            <ImageView
+                android:id="@+id/movie_img"
+                android:layout_width="150dp"
+                android:layout_height="200dp"
+                android:contentDescription="MovieImg"
+                android:padding="10dp">
 
+            </ImageView>
+            <TextView
+                android:id="@+id/tagline"
+                android:text="tagline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/movie_img"
+                android:layout_toEndOf="@+id/movie_img" />
+            <TextView
+                android:id="@+id/overview"
+                android:text="Overview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tagline"
+                android:layout_toRightOf="@+id/movie_img"
+                android:layout_toEndOf="@+id/movie_img"
+                />
+        </RelativeLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
