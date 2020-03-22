@@ -1,5 +1,6 @@
 package fr.m1miage.tmdb.ui.movie
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -28,7 +29,11 @@ import fr.m1miage.tmdb.adapter.GenreAdapter
 import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.Genre
 import fr.m1miage.tmdb.api.model.Movie
+import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
+import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
+import fr.m1miage.tmdb.utils.extension.isFavoriteMovie
+import fr.m1miage.tmdb.utils.extension.toMovieReponse
 import io.reactivex.android.schedulers.AndroidSchedulers
 import jp.wasabeef.picasso.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.movie_detail_fragment.*
@@ -66,19 +71,24 @@ class MovieDetailFragment : Fragment() {
     }
 
     private fun initView(movie: Movie) {
-        println(movie)
+        val preferences = activity?.getPreferences(Context.MODE_PRIVATE)
+
         getMovieImg(movie)
         getMovieBackground(movie)
         movie_title.text = movie.title
         overview.text = movie.overview
-        /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             overview.justificationMode = JUSTIFICATION_MODE_INTER_WORD
-        } */
+        }
         tagline.text = movie.tagline
         movie_genres.layoutManager =
             GridLayoutManager(context, if (movie.genres.size >= 3) 3 else movie.genres.size)
         genreAdapter.genres = movie.genres
         genreAdapter.notifyDataSetChanged()
+        if (preferences!!.isFavoriteMovie(movie.id)) movie_button_favorite.toggle()
+        movie_button_favorite.setOnClickListener {
+            preferences.addOrRemoveMovie(movie.toMovieReponse())
+        }
     }
 
     private fun initGenres() {

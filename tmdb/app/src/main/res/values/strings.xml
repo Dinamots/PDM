@@ -23,4 +23,6 @@
     <string name="search_hint" translatable="false">Search a movie</string>
     <string name="search_title" translatable="false">Search</string>
     <string name="menu_movie_detail" >Movie Detail</string>
+    <string name="share">Share</string>
+    <string name="trailer">Trailer</string>
 </resources>

@@ -59,7 +59,8 @@
                     android:id="@+id/trailer_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Trailer "
+                    android:drawableLeft="@android:drawable/ic_media_play"
+                    android:text="@string/trailer"
                     app:layout_constraintBottom_toTopOf="@+id/movie_img"
 
                     app:layout_constraintTop_toBottomOf="parent" />
@@ -75,19 +76,58 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_movie_layout">
 
-            <ImageView
-                android:id="@+id/movie_img"
-                android:layout_width="150dp"
-                android:layout_height="200dp"
-                android:contentDescription="MovieImg">
 
-            </ImageView>
+            <RelativeLayout
+                android:id="@+id/move_img_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/movie_img"
+                    android:layout_width="150dp"
+                    android:layout_height="200dp"
+                    android:contentDescription="MovieImg">
+
+                </ImageView>
+
+                <LinearLayout
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/movie_img"
+                    android:orientation="vertical"
+
+                    >
+
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@android:drawable/ic_menu_share"
+                        android:id="@+id/movie_share_button"
+                        android:text="@string/share" />
+
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        >
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/movie_button_favorite"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Favorite"
+                            android:drawableLeft="@drawable/button_favorite"
+                            app:iconSize="10sp" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                </LinearLayout>
+            </RelativeLayout>
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/movie_img"
-                android:layout_toRightOf="@+id/movie_img"
+                android:layout_toEndOf="@+id/move_img_buttons"
+                android:layout_toRightOf="@+id/move_img_buttons"
                 android:orientation="vertical"
                 android:paddingLeft="10dp">
 
@@ -109,6 +149,7 @@
 
                     />
             </LinearLayout>
+
 
         </RelativeLayout>
 

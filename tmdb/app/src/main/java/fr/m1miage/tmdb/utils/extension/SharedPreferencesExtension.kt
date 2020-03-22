@@ -42,6 +42,6 @@ internal fun SharedPreferences.editFavorites(
     if (favorites.movies.find { it.id == movie.id } == null) {
         favorites.movies.add(movie)
     } else {
-        favorites.movies.remove(movie)
+        favorites.movies = (favorites.movies.filter { it.id != movie.id }).toMutableList()
     }
 }

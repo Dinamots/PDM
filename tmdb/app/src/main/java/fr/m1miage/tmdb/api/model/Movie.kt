@@ -3,7 +3,7 @@ package fr.m1miage.tmdb.api.model
 import java.io.Serializable
 import java.util.*
 
-data class Movie(
+data class Movie (
     val adult: Boolean,
     val backdrop_path: String,
     val belongs_to_collection: Any?,
