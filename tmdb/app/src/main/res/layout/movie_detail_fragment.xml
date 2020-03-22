@@ -65,6 +65,13 @@
 
                     app:layout_constraintTop_toBottomOf="parent" />
 
+                <FrameLayout
+                    android:id="@+id/youtube_player_fragment"
+                    android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+
             </LinearLayout>
 
         </RelativeLayout>
@@ -103,6 +110,7 @@
                         android:layout_height="wrap_content"
                         android:drawableLeft="@android:drawable/ic_menu_share"
                         android:id="@+id/movie_share_button"
+                        android:textSize="12sp"
                         android:text="@string/share" />
 
                     <com.google.android.material.button.MaterialButtonToggleGroup
@@ -114,7 +122,8 @@
                             android:id="@+id/movie_button_favorite"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Favorite"
+                            android:text="@string/favorite"
+                            android:textSize="12sp"
                             android:drawableLeft="@drawable/button_favorite"
                             app:iconSize="10sp" />
                     </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -155,5 +164,7 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </ScrollView>

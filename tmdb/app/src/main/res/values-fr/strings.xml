@@ -12,5 +12,6 @@
     <string name="menu_movie_detail">Détail du film</string>
     <string name="share">Partager</string>
     <string name="trailer">Bande d\'annonce</string>
+    <string name="favorite">Favoris</string>
 
 </resources>

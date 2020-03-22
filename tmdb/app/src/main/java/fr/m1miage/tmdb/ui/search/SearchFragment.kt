@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,7 +13,6 @@ import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.adapter.PaginationListener
 import fr.m1miage.tmdb.api.RetrofitManager
-import fr.m1miage.tmdb.listeners.button.OnClickListenerMovie
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import io.reactivex.android.schedulers.AndroidSchedulers
