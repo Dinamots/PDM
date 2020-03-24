@@ -36,3 +36,5 @@ val gson = GsonBuilder().registerTypeAdapter(Date::class.java, object : JsonDese
     }
 
 }).serializeNulls().create()
+
+fun formatDate(date: Date) = SimpleDateFormat("dd-MM-yyyy").format(date)

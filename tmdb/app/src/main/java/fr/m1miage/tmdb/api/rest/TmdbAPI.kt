@@ -22,7 +22,7 @@ interface TmdbAPI {
     @GET("search/movie")
     fun searchMovies(
         @Query("query") query: String,
-        @Query("page") page: kotlin.Int
+        @Query("page") page: Int
     ): Observable<Search<MovieResponse>>
 
     @GET("movie/{id}")
@@ -30,9 +30,15 @@ interface TmdbAPI {
 
 
     @GET("movie/{movie_id}/videos")
-    fun getVideos(@Path("movie_id") id: Long) : Observable<Search<Video>>
+    fun getVideos(@Path("movie_id") id: Long): Observable<Search<Video>>
 
     @GET("movie/{movie_id}/credits")
-    fun getCredits(@Path("movie_id") id: Long): Observable<Credits>
+    fun getCredits(@Path("movie_id") id: Long): Observable<Credits<Person>>
+
+    @GET("person/{person_id}/movie_credits")
+    fun getFilmography(@Path("person_id") id: Long): Observable<Credits<MovieResponse>>
+
+    @GET("person/{person_id}")
+    fun getPerson(@Path("person_id") id: Long): Observable<PersonDetail>
 
 }
