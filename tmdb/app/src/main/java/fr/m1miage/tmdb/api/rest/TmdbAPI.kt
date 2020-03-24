@@ -1,9 +1,6 @@
 package fr.m1miage.tmdb.api.rest
 
-import fr.m1miage.tmdb.api.model.Movie
-import fr.m1miage.tmdb.api.model.MovieResponse
-import fr.m1miage.tmdb.api.model.Search
-import fr.m1miage.tmdb.api.model.Video
+import fr.m1miage.tmdb.api.model.*
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -30,5 +27,8 @@ interface TmdbAPI {
 
     @GET("movie/{movie_id}/videos")
     fun getVideos(@Path("movie_id") id: Long) : Observable<Search<Video>>
+
+    @GET("movie/{movie_id}/credits")
+    fun getCredits(@Path("movie_id") id: Long): Observable<Credits>
 
 }

@@ -78,12 +78,7 @@ class MovieDetailFragment : Fragment() {
             ), childFragmentManager, 0
         )
         movie_genres.apply { setHasFixedSize(true); adapter = genreAdapter }
-        movie_detail_tab_layout.setupWithViewPager(view_pager)
-        view_pager.adapter = pagerAdapter
-        movie_detail_tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_movie_black_24dp)
-        movie_detail_tab_layout.getTabAt(0)?.text = "Movie"
-        movie_detail_tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_videocam_black_24dp)
-        movie_detail_tab_layout.getTabAt(1)?.text = "Cast & Crew"
+        initTabs()
         movieDetailViewModel.movieId.observe(viewLifecycleOwner, Observer {
             RetrofitManager.tmdbAPI.getMovie(it.toLong()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -93,8 +88,16 @@ class MovieDetailFragment : Fragment() {
         })
     }
 
-    private fun initView(movie: Movie) {
+    private fun initTabs() {
+        movie_detail_tab_layout.setupWithViewPager(view_pager)
+        view_pager.adapter = pagerAdapter
+        movie_detail_tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_movie_black_24dp)
+        movie_detail_tab_layout.getTabAt(0)?.text = "Movie"
+        movie_detail_tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_videocam_black_24dp)
+        movie_detail_tab_layout.getTabAt(1)?.text = "Cast & Crew"
+    }
 
+    private fun initView(movie: Movie) {
         getMovieBackground(movie)
         initYoutubePlayer(movie)
         initText(movie)

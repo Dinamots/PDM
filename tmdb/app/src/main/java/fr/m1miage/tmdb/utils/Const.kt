@@ -13,24 +13,26 @@ const val API_KEY = "ec254d6e8ac3b46e270afe8da4bb0d5d"
 const val GOOFLE_API_KEY = "AIzaSyArQzig__mI5KngXeX5Zire4RZl74X739U"
 const val TMDB_IMAGES_PATH = "https://image.tmdb.org/t/p/original"
 const val FAVORITES_SHARED_KEY = "FAVORITES"
-const val MOVIE_ID_EXTRAS_KEY = "MOVIE_ID"
 const val IMDB_PATH = "https://www.imdb.com/title/"
-data class Favorites (
-     var movies: MutableList<MovieResponse>
+const val ANONYMOUS_IMG_PATH =
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+
+data class Favorites(
+    var movies: MutableList<MovieResponse>
 )
 
-val gson =  GsonBuilder().registerTypeAdapter(Date::class.java, object : JsonDeserializer<Date?> {
-     var df: DateFormat = SimpleDateFormat("yyyy-MM-dd")
-     override fun deserialize(
-          json: JsonElement?,
-          typeOfT: Type?,
-          context: JsonDeserializationContext?
-     ): Date? {
-          return try {
-               df.parse(json?.asString!!)
-          } catch (e: ParseException) {
-               null
-          }
-     }
+val gson = GsonBuilder().registerTypeAdapter(Date::class.java, object : JsonDeserializer<Date?> {
+    var df: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+    override fun deserialize(
+        json: JsonElement?,
+        typeOfT: Type?,
+        context: JsonDeserializationContext?
+    ): Date? {
+        return try {
+            df.parse(json?.asString!!)
+        } catch (e: ParseException) {
+            null
+        }
+    }
 
 }).serializeNulls().create()
