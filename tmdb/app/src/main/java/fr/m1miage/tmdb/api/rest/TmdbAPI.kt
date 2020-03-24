@@ -28,8 +28,6 @@ interface TmdbAPI {
     @GET("movie/{id}")
     fun getMovie(@Path("id") id: Long): Observable<Movie>
 
-    @GET("movie/{id}")
-    fun getMovie(@Path("id") id: Long): Observable<Movie>
 
     @GET("movie/{movie_id}/videos")
     fun getVideos(@Path("movie_id") id: Long) : Observable<Search<Video>>
