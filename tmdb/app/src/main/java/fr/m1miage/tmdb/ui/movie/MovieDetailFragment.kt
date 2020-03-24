@@ -1,10 +1,6 @@
 package fr.m1miage.tmdb.ui.movie
 
-import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.text.Layout.JUSTIFICATION_MODE_INTER_WORD
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,27 +9,34 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerSupportFragment
 import com.squareup.picasso.Picasso
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.GenreAdapter
+import fr.m1miage.tmdb.adapter.MovieViewPagerAdapter
 import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.Movie
+import fr.m1miage.tmdb.api.model.Video
 import fr.m1miage.tmdb.listeners.YoutubeOnInitializedListener
+import fr.m1miage.tmdb.ui.movie.cast.MovieDetailCastAndCrewFragment
+import fr.m1miage.tmdb.ui.movie.infos.MovieDetailInfosFragment
 import fr.m1miage.tmdb.utils.GOOFLE_API_KEY
-import fr.m1miage.tmdb.utils.IMDB_PATH
 import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
-import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
-import fr.m1miage.tmdb.utils.extension.isFavoriteMovie
-import fr.m1miage.tmdb.utils.extension.toMovieReponse
 import io.reactivex.android.schedulers.AndroidSchedulers
 import jp.wasabeef.picasso.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.movie_detail_fragment.*
+import java.text.SimpleDateFormat
+import java.util.function.Consumer
+
 
 class MovieDetailFragment : Fragment() {
     val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
     val genreAdapter: GenreAdapter = GenreAdapter(listOf())
     lateinit var youTubePlayerFragment: YouTubePlayerSupportFragment
+    lateinit var youtubePlayer: YouTubePlayer
+    lateinit var videos: List<Video>
+    lateinit var pagerAdapter: MovieViewPagerAdapter
 
     companion object {
         fun newInstance() = MovieDetailFragment()
@@ -48,25 +51,43 @@ class MovieDetailFragment : Fragment() {
     }
 
     private fun initYoutubePlayer(movie: Movie) {
+        youtube_player_fragment.visibility = View.GONE
         youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance()
 
         val transaction: FragmentTransaction = childFragmentManager.beginTransaction()
         transaction.add(R.id.youtube_player_fragment, youTubePlayerFragment as Fragment).commit()
-        val initializer = YoutubeOnInitializedListener(movie) {
-            if (!it) trailer_button.visibility = View.GONE
-        }
+        val initializer = YoutubeOnInitializedListener(movie) { youtubePlayer = it }
         youTubePlayerFragment.initialize(GOOFLE_API_KEY, initializer)
-        youtube_player_fragment.visibility = View.GONE
+
+        val disposable = RetrofitManager.tmdbAPI.getVideos(movie.id.toLong())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { search -> videos = search.results },
+                { err -> println(err) }
+            )
+
     }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        pagerAdapter = MovieViewPagerAdapter(
+            listOf(
+                MovieDetailInfosFragment(),
+                MovieDetailCastAndCrewFragment()
+            ), childFragmentManager, 0
+        )
         movie_genres.apply { setHasFixedSize(true); adapter = genreAdapter }
+        movie_detail_tab_layout.setupWithViewPager(view_pager)
+        view_pager.adapter = pagerAdapter
+        movie_detail_tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_movie_black_24dp)
+        movie_detail_tab_layout.getTabAt(0)?.text = "Movie"
+        movie_detail_tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_videocam_black_24dp)
+        movie_detail_tab_layout.getTabAt(1)?.text = "Cast & Crew"
         movieDetailViewModel.movieId.observe(viewLifecycleOwner, Observer {
             RetrofitManager.tmdbAPI.getMovie(it.toLong()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { movie -> initView(movie) },
+                    { movie -> movieDetailViewModel.movie.value = movie; initView(movie) },
                     { error -> println(error) }
                 )
         })
@@ -74,64 +95,35 @@ class MovieDetailFragment : Fragment() {
 
     private fun initView(movie: Movie) {
 
-        getMovieImg(movie)
         getMovieBackground(movie)
         initYoutubePlayer(movie)
         initText(movie)
         initGenres(movie)
-        initFavorite(movie)
         initTrailerButton()
-        initShareButton(movie)
-    }
-
-    private fun initShareButton(movie: Movie) {
-        movie_share_button.setOnClickListener {
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(
-                    Intent.EXTRA_TEXT,
-                    "${movie.title} \n" +
-                            " ${movie.homepage} \n" +
-                            " ${IMDB_PATH + movie.imdb_id} \n" +
-                            " ${movie.vote_average / 2} / 5 "
-                )
-                type = "text/plain"
-            }
-
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
-        }
+        movie_rating.rating = (movie.vote_average / 2).toFloat()
 
     }
 
     private fun initTrailerButton() {
         trailer_button.setOnClickListener {
             when (youtube_player_fragment.visibility) {
-                View.GONE -> youtube_player_fragment.visibility = View.VISIBLE
-                View.VISIBLE -> youtube_player_fragment.visibility = View.GONE
+                View.GONE -> {
+                    youtube_player_fragment.visibility = View.VISIBLE
+                    youtubePlayer.loadVideo(videos[0].key)
+                }
+                View.VISIBLE -> {
+                    youtube_player_fragment.visibility = View.GONE
+                    youtubePlayer.pause()
+                }
             }
-        }
-    }
-
-    private fun initFavorite(
-        movie: Movie
-    ) {
-        val preferences = activity?.getPreferences(Context.MODE_PRIVATE)
-
-        if (preferences!!.isFavoriteMovie(movie.id)) movie_button_favorite.toggle()
-        movie_button_favorite.setOnClickListener {
-            preferences.addOrRemoveMovie(movie.toMovieReponse())
         }
     }
 
     private fun initText(movie: Movie) {
         movie_title.text = movie.title
-        overview.text = movie.overview
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            overview.justificationMode = JUSTIFICATION_MODE_INTER_WORD
-        }
-        tagline.text = movie.tagline
+        release.text = SimpleDateFormat("dd-MM-yyyy").format(movie.release_date)
     }
+
 
     private fun initGenres(movie: Movie) {
         movie_genres.layoutManager =
@@ -140,22 +132,14 @@ class MovieDetailFragment : Fragment() {
         genreAdapter.notifyDataSetChanged()
     }
 
+
     private fun getMovieBackground(movie: Movie) {
-        Picasso.get()
-            .load(TMDB_IMAGES_PATH + if (movie.poster_path !== "") movie.poster_path else movie.backdrop_path)
-            .fit()
-            .into(movie_img)
-
-    }
-
-    private fun getMovieImg(movie: Movie) {
 
         Picasso.get()
             .load(TMDB_IMAGES_PATH + movie.backdrop_path)
             .transform(BlurTransformation(context, 15, 1))
             .fit()
             .into(movie_backdrop)
-
     }
 
 }
