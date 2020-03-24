@@ -9,5 +9,9 @@
     <string name="popular_movies">Populaires</string>
     <string name="menu_gallery">TV</string>
     <string name="menu_slideshow">Favoris</string>
+    <string name="menu_movie_detail">Détail du film</string>
+    <string name="share">Partager</string>
+    <string name="trailer">Bande d\'annonce</string>
+    <string name="favorite">Favoris</string>
 
 </resources>

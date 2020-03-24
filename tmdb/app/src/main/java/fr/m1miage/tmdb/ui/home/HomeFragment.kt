@@ -7,12 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
+import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
+import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
@@ -112,9 +115,16 @@ class HomeFragment : Fragment() {
     private fun getAdapter(headerString: String): MovieAdapter {
         val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
         return MovieAdapter(
-            mutableListOf(), headerString, preferences,
-            { movieResponse -> println(movieResponse.title) })
-        { movieResponse, _ ->
+            mutableListOf(),
+            headerString,
+            preferences,
+            {
+                val navController = findNavController(activity!!, R.id.nav_host_fragment)
+                val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
+                navController.navigate(R.id.nav_movie_detail)
+                movieDetailViewModel.movieId.value = it.id
+            }
+        ) { movieResponse, _ ->
             preferences?.addOrRemoveMovie(movieResponse)
         }
 

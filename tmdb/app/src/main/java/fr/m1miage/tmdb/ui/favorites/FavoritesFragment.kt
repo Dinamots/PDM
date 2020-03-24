@@ -8,13 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
+import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import fr.m1miage.tmdb.utils.extension.getFavorites
+import kotlinx.android.synthetic.main.fragment_favorites.*
 
 class FavoritesFragment : Fragment() {
     private val slideshowViewModel: FavoritesViewModel by activityViewModels()
@@ -25,21 +28,26 @@ class FavoritesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        root = inflater.inflate(R.layout.fragment_favorites, container, false)
-        val recyclerView = root.findViewById<RecyclerView>(R.id.favorites_recycler_view)
-        val sharedPreferences = activity?.getPreferences(Context.MODE_PRIVATE)
-        recyclerView?.layoutManager = GridLayoutManager(context, 3)
 
-        recyclerView?.adapter =
+        root = inflater.inflate(R.layout.fragment_favorites, container, false)
+
+        val sharedPreferences = activity?.getPreferences(Context.MODE_PRIVATE)
+        favorites_recycler_view.layoutManager = GridLayoutManager(context, 3)
+
+        favorites_recycler_view.adapter =
             MovieAdapter(
                 sharedPreferences!!.getFavorites().movies,
                 null,
                 sharedPreferences,
-                { movieResponse -> onItemClick(movieResponse) },
-                { movieResponse, adapter ->
-                    onFavoriteButtonClick(sharedPreferences, movieResponse, adapter)
+                {
+                    val navController = findNavController(activity!!, R.id.nav_host_fragment)
+                    val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
+                    navController.navigate(R.id.nav_movie_detail)
+                    movieDetailViewModel.movieId.value = it.id
                 }
-            )
+            ) { movieResponse, adapter ->
+                onFavoriteButtonClick(sharedPreferences, movieResponse, adapter)
+            }
         return root
     }
 

@@ -4,7 +4,7 @@ import java.io.Serializable
 import java.util.*
 import kotlin.Int
 
-data class Movie(
+data class Movie (
     val adult: Boolean,
     val backdrop_path: String,
     val belongs_to_collection: Any?,
@@ -25,6 +25,7 @@ data class Movie(
     val runtime: Int,
     val spoken_languages: List<SpokenLanguage>,
     val status: String,
+    val title: String,
     val tagline: String,
     val video: Boolean,
     val vote_average: Double,
@@ -51,4 +52,15 @@ data class Country(
 data class SpokenLanguage(
     val iso_639_1: String,
     val name: String
+)
+
+data class Video(
+    val id: String,
+    val iso_639_1: String,
+    val iso_3166_1: String,
+    val key: String,
+    val name: String,
+    val site: String,
+    val size: Int,
+    val type: String
 )

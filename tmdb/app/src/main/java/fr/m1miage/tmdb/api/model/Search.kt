@@ -4,6 +4,7 @@ import java.io.Serializable
 import kotlin.Int
 
 data class Search<T>(
+    val id: Int?,
     val page: Int?,
     val total_results: Int?,
     val total_pages: Int?,

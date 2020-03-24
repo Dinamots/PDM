@@ -1,6 +1,7 @@
 package fr.m1miage.tmdb
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.StrictMode
 import android.view.Menu
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         nav_view.setupWithNavController(navController)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

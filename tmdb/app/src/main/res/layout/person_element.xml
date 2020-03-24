@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    android:layout_width="wrap_content"
+    android:layout_marginLeft="10dp"
+    app:cardBackgroundColor="@color/colorPrimaryDark"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/person_img"
+            android:layout_width="150dp"
+            android:layout_height="250dp"
+            android:contentDescription="Actor Img" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/person_name"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/person_img"
+            android:layout_centerInParent="true"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:maxLines="1"
+            android:text="Actor Name" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/person_job"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/person_name"
+            android:layout_centerInParent="true"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:maxLines="1"
+            android:text="Person Role" />
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context=".ui.movie.cast.MovieDetailCastAndCrewFragment">
+    <TextView
+        android:id="@+id/cast_title"
+        android:text="CAST"
+        android:layout_marginBottom="1dp"
+        android:textSize="25sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cast_recycler_view"
+        android:layout_height="300dp"
+        android:layout_width="wrap_content"
+
+        />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="1dp"
+        android:text="CREW"
+        android:textSize="25sp"
+        android:id="@+id/crew_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/crew_recycler_view"
+        android:layout_height="300dp"
+        android:layout_width="match_parent"
+        />
+
+
+
+
+
+</LinearLayout>
