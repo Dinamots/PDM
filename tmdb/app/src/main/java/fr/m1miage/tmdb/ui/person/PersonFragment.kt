@@ -20,14 +20,13 @@ import fr.m1miage.tmdb.api.model.Credits
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.api.model.PersonDetail
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
-import fr.m1miage.tmdb.utils.IMDB_PATH
-import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
+import fr.m1miage.tmdb.utils.IMDB_MOVIE_PATH
+import fr.m1miage.tmdb.utils.IMDB_PERSON_PATH
 import fr.m1miage.tmdb.utils.extension.getImgLink
 import fr.m1miage.tmdb.utils.extension.getMovieResponseList
 import fr.m1miage.tmdb.utils.formatDate
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.person_fragment.*
-import java.text.SimpleDateFormat
 
 class PersonFragment : Fragment() {
     lateinit var movieAdapter: MovieAdapter
@@ -97,7 +96,7 @@ class PersonFragment : Fragment() {
     private fun initText(person: PersonDetail) {
         val birthDeathString =
             "${formatDate(person.birthday)} - ${if (person.deathday != null) formatDate(person.deathday) else "alive"}"
-        val imdbLink = IMDB_PATH + person.imdb_id
+        val imdbLink = IMDB_PERSON_PATH + person.imdb_id
 
         person_name.text = person.name
         person_birth_death.text = birthDeathString

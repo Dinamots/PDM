@@ -80,7 +80,6 @@ class MovieDetailCastAndCrewFragment : Fragment() {
         recyclerView: RecyclerView
     ) {
         recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
-        println("height = " + recyclerView.height)
         recyclerView.adapter = adapter
         adapter.persons = persons
         adapter.notifyDataSetChanged()

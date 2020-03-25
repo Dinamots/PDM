@@ -78,7 +78,7 @@ open class MovieAdapter(
             .load(TMDB_IMAGES_PATH + if (movie.poster_path !== "") movie.poster_path else movie.backdrop_path)
             .fit()
             .into(holder.movieImg)
-        holder.movieRating.rating = movie.vote_average.toFloat() / 2
+        holder.movieRating.rating = movie.vote_average?.toFloat()?.div(2) ?: 0F
         holder.movieName.text = movie.title
         holder.movieImg.setOnClickListener { listener(movie) }
         holder.itemView.setOnClickListener { listener(movie) }

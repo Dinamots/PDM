@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerSupportFragment
@@ -30,7 +34,7 @@ import java.text.SimpleDateFormat
 import java.util.function.Consumer
 
 
-class MovieDetailFragment : Fragment() {
+class MovieDetailFragment() : Fragment() {
     val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
     val genreAdapter: GenreAdapter = GenreAdapter(listOf())
     lateinit var youTubePlayerFragment: YouTubePlayerSupportFragment
@@ -62,7 +66,7 @@ class MovieDetailFragment : Fragment() {
         val disposable = RetrofitManager.tmdbAPI.getVideos(movie.id.toLong())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { search -> videos = search.results },
+                { search -> videos = search.results; if (videos.isEmpty()) trailer_button.visibility = View.GONE },
                 { err -> println(err) }
             )
 
@@ -71,6 +75,7 @@ class MovieDetailFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         pagerAdapter = MovieViewPagerAdapter(
             listOf(
                 MovieDetailInfosFragment(),
@@ -112,7 +117,7 @@ class MovieDetailFragment : Fragment() {
             when (youtube_player_fragment.visibility) {
                 View.GONE -> {
                     youtube_player_fragment.visibility = View.VISIBLE
-                    youtubePlayer.loadVideo(videos[0].key)
+                    if (videos.isNotEmpty()) youtubePlayer.loadVideo(videos[0].key)
                 }
                 View.VISIBLE -> {
                     youtube_player_fragment.visibility = View.GONE

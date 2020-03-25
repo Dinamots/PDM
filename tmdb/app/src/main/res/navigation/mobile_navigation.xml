@@ -27,6 +27,10 @@
         android:label="@string/menu_movie_detail"
         tools:layout="@layout/movie_detail_fragment">
 
+        <action
+            android:id="@+id/action_movie_detail_nav_home"
+            app:destination="@id/nav_home"
+            app:popUpTo="@id/nav_home" />
     </fragment>
 
     <fragment
@@ -46,4 +50,5 @@
         android:name="fr.m1miage.tmdb.ui.favorites.FavoritesFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_favorites" />
+
 </navigation>

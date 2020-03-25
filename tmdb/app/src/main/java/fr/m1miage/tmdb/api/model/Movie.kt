@@ -17,7 +17,7 @@ data class Movie (
     val original_title: String,
     val overview: String,
     val popularity: Double,
-    val poster_path: String,
+    val poster_path: String?,
     val production_companies: List<Company>,
     val production_countries: List<Country>,
     val release_date: Date,
