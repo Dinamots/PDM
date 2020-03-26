@@ -15,27 +15,23 @@ import com.squareup.picasso.Picasso
 
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.MovieAdapter
-import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.Credits
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.api.model.PersonDetail
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
-import fr.m1miage.tmdb.utils.IMDB_MOVIE_PATH
 import fr.m1miage.tmdb.utils.IMDB_PERSON_PATH
 import fr.m1miage.tmdb.utils.extension.getImgLink
 import fr.m1miage.tmdb.utils.extension.getMovieResponseList
 import fr.m1miage.tmdb.utils.formatDate
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.person_fragment.*
 
 class PersonFragment : Fragment() {
     lateinit var movieAdapter: MovieAdapter
-
+    val personViewModel: PersonViewModel by activityViewModels()
     companion object {
         fun newInstance() = PersonFragment()
     }
 
-    val personViewModel: PersonViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,59 +54,47 @@ class PersonFragment : Fragment() {
                 movieDetailViewModel.movieId.value = it.id
             })
         { _, _ -> }
-        personViewModel.person.observe(viewLifecycleOwner, Observer {
-            println(it.id)
-            RetrofitManager.tmdbAPI.getPerson(it.id.toLong())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { personDetail -> getCredits(personDetail) },
-                    { err -> println(err) }
-                )
 
+        personViewModel.person.observe(viewLifecycleOwner, Observer {
+            personViewModel.fecthPersonDetail(it.id)
+            personViewModel.fetchFilmography(it.id)
         })
 
-    }
+        personViewModel.personDetail.observe(viewLifecycleOwner, Observer {
+            initView(it)
+        })
 
-    private fun getCredits(personDetail: PersonDetail) {
-        val disposable = RetrofitManager.tmdbAPI.getFilmography(personDetail.id.toLong())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { credits -> initView(credits, personDetail) },
-                { err -> println(err) }
-            )
-    }
+        personViewModel.filmography.observe(viewLifecycleOwner, Observer {
+            initMovieList(it)
+        })
 
-    private fun getPersonDetail(credits: Credits<MovieResponse>?) {
+
+
     }
 
     private fun initView(
-        credits: Credits<MovieResponse>,
-        person: PersonDetail
+        personDetail: PersonDetail
     ) {
-        initMovieList(credits)
-        initPersonImg(person)
-        initText(person)
+        initPersonImg(personDetail)
+        initText(personDetail)
 
     }
 
-    private fun initText(person: PersonDetail) {
+    private fun initText(personDetail: PersonDetail) {
         val birthDeathString =
-            "${formatDate(person.birthday)} - ${if (person.deathday != null) formatDate(person.deathday) else "alive"}"
-        val imdbLink = IMDB_PERSON_PATH + person.imdb_id
+            "${formatDate(personDetail.birthday)} - ${if (personDetail.deathday != null) formatDate(personDetail.deathday) else "alive"}"
+        val imdbLink = IMDB_PERSON_PATH + personDetail.imdb_id
 
-        person_name.text = person.name
+        person_name.text = personDetail.name
         person_birth_death.text = birthDeathString
-        place_of_birth.text = person.place_of_birth
+        place_of_birth.text = personDetail.place_of_birth
         imdb_link.text = imdbLink
         imdb_link.movementMethod = LinkMovementMethod.getInstance()
-
-
-        // biography.text = person.biography
     }
 
-    private fun initPersonImg(person: PersonDetail) {
+    private fun initPersonImg(personDetail: PersonDetail) {
         Picasso.get()
-            .load(person.getImgLink())
+            .load(personDetail.getImgLink())
             .fit()
             .into(person_img)
     }

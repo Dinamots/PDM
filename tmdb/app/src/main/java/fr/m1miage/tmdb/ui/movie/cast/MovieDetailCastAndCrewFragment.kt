@@ -29,6 +29,7 @@ class MovieDetailCastAndCrewFragment : Fragment() {
     val crewAdapter: PersonAdapter = getAdapter()
     val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
     val personViewModel: PersonViewModel by activityViewModels()
+    val movieDetailCastAndCrewViewModel: MovieDetailCastAndCrewViewModel by activityViewModels()
     val castAdapter: PersonAdapter = getAdapter()
 
     companion object {
@@ -48,12 +49,11 @@ class MovieDetailCastAndCrewFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
-            RetrofitManager.tmdbAPI.getCredits(it.id.toLong())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { credits: Credits<Person> -> initView(credits) },
-                    { err -> println(err) }
-                )
+            movieDetailCastAndCrewViewModel.fetchCredits(it.id)
+        })
+
+        movieDetailCastAndCrewViewModel.credits.observe(viewLifecycleOwner, Observer {
+            initView(it)
         })
     }
 
@@ -61,13 +61,12 @@ class MovieDetailCastAndCrewFragment : Fragment() {
         return PersonAdapter(listOf()) {
             val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
             navController.navigate(R.id.nav_person)
-            personViewModel.person.value = it
+            personViewModel.person.postValue(it)
         }
     }
 
 
     private fun initView(credits: Credits<Person>) {
-
         initRecyclerView(credits.cast, castAdapter, cast_recycler_view)
         initRecyclerView(credits.crew, crewAdapter, crew_recycler_view)
 
