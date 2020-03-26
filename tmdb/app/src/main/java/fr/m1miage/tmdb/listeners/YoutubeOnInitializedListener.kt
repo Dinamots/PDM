@@ -6,7 +6,7 @@ import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.Movie
 import io.reactivex.android.schedulers.AndroidSchedulers
 
-class YoutubeOnInitializedListener(val movie: Movie, val getPlayer: (YouTubePlayer) -> Unit) : YouTubePlayer.OnInitializedListener {
+class YoutubeOnInitializedListener(val getPlayer: (YouTubePlayer) -> Unit) : YouTubePlayer.OnInitializedListener {
     override fun onInitializationSuccess(
         provider: YouTubePlayer.Provider?,
         player: YouTubePlayer?,

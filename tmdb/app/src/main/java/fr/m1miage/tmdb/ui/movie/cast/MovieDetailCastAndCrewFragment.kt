@@ -28,7 +28,7 @@ import okhttp3.internal.notifyAll
 class MovieDetailCastAndCrewFragment : Fragment() {
     val crewAdapter: PersonAdapter = getAdapter()
     val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
-
+    val personViewModel: PersonViewModel by activityViewModels()
     val castAdapter: PersonAdapter = getAdapter()
 
     companion object {
@@ -60,7 +60,6 @@ class MovieDetailCastAndCrewFragment : Fragment() {
     private fun getAdapter(): PersonAdapter {
         return PersonAdapter(listOf()) {
             val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
-            val personViewModel: PersonViewModel by activityViewModels()
             navController.navigate(R.id.nav_person)
             personViewModel.person.value = it
         }
@@ -83,8 +82,6 @@ class MovieDetailCastAndCrewFragment : Fragment() {
         recyclerView.adapter = adapter
         adapter.persons = persons
         adapter.notifyDataSetChanged()
-
-
     }
 
 

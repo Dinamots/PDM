@@ -54,28 +54,26 @@ class MovieDetailFragment() : Fragment() {
         return view
     }
 
-    private fun initYoutubePlayer(movie: Movie) {
+    private fun initYoutubePlayer() {
         youtube_player_fragment.visibility = View.GONE
         youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance()
 
         val transaction: FragmentTransaction = childFragmentManager.beginTransaction()
         transaction.add(R.id.youtube_player_fragment, youTubePlayerFragment as Fragment).commit()
-        val initializer = YoutubeOnInitializedListener(movie) { youtubePlayer = it }
+        val initializer = YoutubeOnInitializedListener { youtubePlayer = it }
         youTubePlayerFragment.initialize(GOOFLE_API_KEY, initializer)
 
-        val disposable = RetrofitManager.tmdbAPI.getVideos(movie.id.toLong())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { search -> videos = search.results; if (videos.isEmpty()) trailer_button.visibility = View.GONE },
-                { err -> println(err) }
-            )
+        movieDetailViewModel.videos.observe(viewLifecycleOwner, Observer {
+            if (it.isEmpty()) {
+                trailer_button.visibility = View.GONE
+            }
+        })
 
     }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         pagerAdapter = MovieViewPagerAdapter(
             listOf(
                 MovieDetailInfosFragment(),
@@ -85,12 +83,23 @@ class MovieDetailFragment() : Fragment() {
         movie_genres.apply { setHasFixedSize(true); adapter = genreAdapter }
         initTabs()
         movieDetailViewModel.movieId.observe(viewLifecycleOwner, Observer {
-            RetrofitManager.tmdbAPI.getMovie(it.toLong()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { movie -> movieDetailViewModel.movie.value = movie; initView(movie) },
-                    { error -> println(error) }
-                )
+            movieDetailViewModel.fetchAll(it)
         })
+
+        initYoutubePlayer()
+
+        movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
+            initView(it)
+        })
+
+        movieDetailViewModel.videos.observe(viewLifecycleOwner, Observer {
+            videos = it
+            if(it.isNotEmpty()) {
+               trailer_button.visibility = View.VISIBLE
+            }
+        })
+
+
     }
 
     private fun initTabs() {
@@ -104,7 +113,6 @@ class MovieDetailFragment() : Fragment() {
 
     private fun initView(movie: Movie) {
         getMovieBackground(movie)
-        initYoutubePlayer(movie)
         initText(movie)
         initGenres(movie)
         initTrailerButton()

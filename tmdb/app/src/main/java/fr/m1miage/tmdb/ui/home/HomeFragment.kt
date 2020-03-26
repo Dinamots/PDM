@@ -122,7 +122,7 @@ class HomeFragment : Fragment() {
                 val navController = findNavController(activity!!, R.id.nav_host_fragment)
                 val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
                 navController.navigate(R.id.nav_movie_detail)
-                movieDetailViewModel.movieId.value = it.id
+                movieDetailViewModel.movieId.postValue(it.id)
             }
         ) { movieResponse, _ ->
             preferences?.addOrRemoveMovie(movieResponse)
