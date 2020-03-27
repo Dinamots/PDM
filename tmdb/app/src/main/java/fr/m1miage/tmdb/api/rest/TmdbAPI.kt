@@ -41,4 +41,10 @@ interface TmdbAPI {
     @GET("person/{person_id}")
     fun getPerson(@Path("person_id") id: Long): Observable<PersonDetail>
 
+    @GET("search/person")
+    fun searchPersons(
+        @Query("query") query: String,
+        @Query("page") page: Int
+    ): Observable<Search<PersonResponse>>
+
 }

@@ -43,7 +43,6 @@ class MovieDetailInfosFragment : Fragment() {
         movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
             initView(it)
         })
-        // TODO: Use the ViewModel
     }
 
     private fun initView(movie: Movie) {
