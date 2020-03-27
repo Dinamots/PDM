@@ -58,7 +58,7 @@ class MovieDetailCastAndCrewFragment : Fragment() {
     }
 
     private fun getAdapter(): PersonAdapter {
-        return PersonAdapter(listOf()) {
+        return PersonAdapter(mutableListOf()) {
             val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
             navController.navigate(R.id.nav_person)
             personViewModel.person.postValue(it)
@@ -79,7 +79,7 @@ class MovieDetailCastAndCrewFragment : Fragment() {
     ) {
         recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
         recyclerView.adapter = adapter
-        adapter.persons = persons
+        adapter.persons = persons.toMutableList()
         adapter.notifyDataSetChanged()
     }
 

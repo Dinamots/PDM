@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.MovieAdapter
+import fr.m1miage.tmdb.adapter.PaginationListener
 import fr.m1miage.tmdb.adapter.PersonAdapter
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.ui.person.PersonViewModel
@@ -31,7 +32,7 @@ class SearchPersonFragment : Fragment() {
     var totalPages = 1
     var currentPage = 1
     var searchString = ""
-
+    var newSearch = true
     companion object {
         fun newInstance() = SearchPersonFragment()
     }
@@ -52,6 +53,7 @@ class SearchPersonFragment : Fragment() {
         search_person_recycler_view.layoutManager = layout
 
         searchViewModel.searchSting.observe(viewLifecycleOwner, Observer {
+            newSearch = true
             searchString = it
             currentPage = 1
             searchPersonViewModel.fetchPersons(searchString, currentPage)
@@ -62,9 +64,29 @@ class SearchPersonFragment : Fragment() {
         })
 
         searchPersonViewModel.persons.observe(viewLifecycleOwner, Observer {
-            adapter.persons = it.toPersons()
-            println(adapter.persons)
+            if(newSearch) {
+                adapter.persons = it.toPersons().toMutableList()
+                newSearch = false
+            } else {
+                adapter.persons.addAll(it.toPersons().toMutableList())
+            }
             adapter.notifyDataSetChanged()
+        })
+
+        search_person_recycler_view.addOnScrollListener(object : PaginationListener(layout) {
+            override fun loadMoreItems() {
+                currentPage++
+                searchPersonViewModel.fetchPersons(searchString, currentPage)
+            }
+
+            override fun isLastPage(): Boolean {
+                return currentPage == totalPages
+            }
+
+            override fun isLoading(): Boolean {
+                return false
+            }
+
         })
     }
 

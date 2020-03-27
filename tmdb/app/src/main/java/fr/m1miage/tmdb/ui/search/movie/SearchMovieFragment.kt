@@ -26,7 +26,7 @@ class SearchMovieFragment : Fragment() {
     var totalPages = 1
     var currentPage = 1
     var searchString = ""
-
+    var newSearch = true
     companion object {
         fun newInstance() = SearchMovieFragment()
     }
@@ -48,6 +48,7 @@ class SearchMovieFragment : Fragment() {
         search_movie_recycler_view.adapter = adapter
         search_movie_recycler_view.layoutManager = layout
         searchViewModel.searchSting.observe(viewLifecycleOwner, Observer {
+            newSearch = true
             searchString = it
             currentPage = 1
             searchViewModel.fetchMovies(searchString, currentPage)
@@ -70,7 +71,12 @@ class SearchMovieFragment : Fragment() {
         })
 
         searchViewModel.movies.observe(viewLifecycleOwner, Observer {
-            adapter.movies.addAll(it)
+            if(newSearch) {
+                adapter.movies = it.toMutableList()
+                newSearch = false
+            } else {
+                adapter.movies.addAll(it)
+            }
             adapter.notifyDataSetChanged()
         })
 

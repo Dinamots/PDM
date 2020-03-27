@@ -14,7 +14,7 @@ import fr.m1miage.tmdb.utils.extension.getImgLink
 import fr.m1miage.tmdb.utils.extension.isCast
 import kotlinx.android.synthetic.main.person_element.view.*
 
-class PersonAdapter(var persons: List<Person>, val onClick: (Person) -> Unit) :
+class PersonAdapter(var persons: MutableList<Person>, val onClick: (Person) -> Unit) :
     RecyclerView.Adapter<PersonViewHolder>() {
 
 
