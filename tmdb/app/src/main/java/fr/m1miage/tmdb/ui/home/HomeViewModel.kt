@@ -12,6 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 class HomeViewModel : ViewModel() {
 
     private val upcomingMovies by lazy {
+
         getLiveData(RetrofitManager.tmdbAPI.getUpcoming())
     }
 
@@ -44,6 +45,7 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun getLiveData(observable: Observable<Search<MovieResponse>>): MutableLiveData<List<MovieResponse>> {
+        println("bonjour")
         val liveData = MutableLiveData<List<MovieResponse>>()
         liveData.also {
             loadMovies(liveData, observable)
