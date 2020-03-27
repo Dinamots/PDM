@@ -32,3 +32,6 @@ fun Movie.toMovieReponse(): MovieResponse {
 
 fun Movie.getImgPath() =
     if (this.poster_path == null) DEFAULT_MOVIE_IMG_PATH else TMDB_IMAGES_PATH + this.poster_path
+
+fun MovieResponse.getImgPath() =
+    if (this.poster_path == null) DEFAULT_MOVIE_IMG_PATH else TMDB_IMAGES_PATH + this.poster_path

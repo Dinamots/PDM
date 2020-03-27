@@ -10,20 +10,25 @@ import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 
 import fr.m1miage.tmdb.R
+import fr.m1miage.tmdb.adapter.BasicViewPagerAdapter
 import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.adapter.PaginationListener
 import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
+import fr.m1miage.tmdb.ui.movie.cast.MovieDetailCastAndCrewFragment
+import fr.m1miage.tmdb.ui.movie.infos.MovieDetailInfosFragment
+import fr.m1miage.tmdb.ui.search.movie.SearchMovieFragment
+import fr.m1miage.tmdb.ui.search.person.SearchPersonFragment
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import fr.m1miage.tmdb.utils.extension.getFavorites
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.movie_detail_fragment.*
 import kotlinx.android.synthetic.main.search_fragment.*
+import kotlinx.android.synthetic.main.search_fragment.view_pager
 
 class SearchFragment : Fragment() {
     val searchViewModel: SearchViewModel by activityViewModels()
-    var totalPages = 1
-    var currentPage = 1
-    var searchString = ""
+    lateinit var pagerAdapter: BasicViewPagerAdapter
 
     companion object {
         fun newInstance() = SearchFragment()
@@ -40,58 +45,22 @@ class SearchFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val adapter = getAdapter()
-        val layout = GridLayoutManager(context, 3)
-        search_recycler_view.adapter = adapter
-        search_recycler_view.layoutManager = layout
-        searchViewModel.searchSting.observe(viewLifecycleOwner, Observer {
-            searchString = it
-            currentPage = 1
-            searchViewModel.fetchMovies(searchString, currentPage)
-        })
-
-        search_recycler_view.addOnScrollListener(object : PaginationListener(layout) {
-            override fun loadMoreItems() {
-                currentPage++
-                searchViewModel.fetchMovies(searchString, currentPage)
-            }
-
-            override fun isLastPage(): Boolean {
-                return currentPage == totalPages
-            }
-
-            override fun isLoading(): Boolean {
-                return false
-            }
-
-        })
-
-        searchViewModel.movies.observe(viewLifecycleOwner, Observer {
-            adapter.movies = it.toMutableList()
-            adapter.notifyDataSetChanged()
-        })
-
-        searchViewModel.totalPages.observe(viewLifecycleOwner, Observer {
-            totalPages = it
-        })
+        pagerAdapter = BasicViewPagerAdapter(
+            listOf(
+                SearchMovieFragment(),
+                SearchPersonFragment()
+            ), childFragmentManager, 0
+        )
+        initTabs()
     }
 
-    private fun getAdapter(): MovieAdapter {
-        val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
-        return MovieAdapter(
-            mutableListOf(),
-            null,
-            preferences,
-            {
-                val navController = findNavController(activity!!, R.id.nav_host_fragment)
-                val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
-                navController.navigate(R.id.nav_movie_detail)
-                movieDetailViewModel.movieId.value = it.id
-            }
-        )
-        { movieResponse, _ ->
-            preferences?.addOrRemoveMovie(movieResponse)
-            println(preferences?.getFavorites()?.movies)
-        }
+
+    private fun initTabs() {
+        search_tab_layout.setupWithViewPager(view_pager)
+        view_pager.adapter = pagerAdapter
+        search_tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_movie_black_24dp)
+        search_tab_layout.getTabAt(0)?.text = "Movie"
+        search_tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_videocam_black_24dp)
+        search_tab_layout.getTabAt(1)?.text = "Cast & Crew"
     }
 }

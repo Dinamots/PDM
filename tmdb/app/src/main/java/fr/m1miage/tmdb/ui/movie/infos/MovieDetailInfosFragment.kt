@@ -85,7 +85,7 @@ class MovieDetailInfosFragment : Fragment() {
         movie: Movie
     ) {
         val preferences = activity?.getPreferences(Context.MODE_PRIVATE)
-        if (preferences!!.isFavoriteMovie(movie.toMovieReponse()) ||
+        if (preferences!!.isFavoriteMovie(movie.toMovieReponse()) && !movie_button_favorite.isChecked ||
             !preferences.isFavoriteMovie(movie.toMovieReponse()) && movie_button_favorite.isChecked
         ) {
             movie_button_favorite.toggle()

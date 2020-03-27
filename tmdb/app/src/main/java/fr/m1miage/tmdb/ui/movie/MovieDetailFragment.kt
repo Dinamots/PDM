@@ -4,34 +4,29 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerSupportFragment
 import com.squareup.picasso.Picasso
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.GenreAdapter
-import fr.m1miage.tmdb.adapter.MovieViewPagerAdapter
-import fr.m1miage.tmdb.api.RetrofitManager
+import fr.m1miage.tmdb.adapter.BasicViewPagerAdapter
 import fr.m1miage.tmdb.api.model.Movie
 import fr.m1miage.tmdb.api.model.Video
 import fr.m1miage.tmdb.listeners.YoutubeOnInitializedListener
 import fr.m1miage.tmdb.ui.movie.cast.MovieDetailCastAndCrewFragment
 import fr.m1miage.tmdb.ui.movie.infos.MovieDetailInfosFragment
 import fr.m1miage.tmdb.utils.GOOFLE_API_KEY
+import fr.m1miage.tmdb.utils.MAX_SPAN_COUNT
+import fr.m1miage.tmdb.utils.MIN_SPAN_COUNT
 import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
-import io.reactivex.android.schedulers.AndroidSchedulers
 import jp.wasabeef.picasso.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.movie_detail_fragment.*
 import java.text.SimpleDateFormat
-import java.util.function.Consumer
 
 
 class MovieDetailFragment() : Fragment() {
@@ -40,7 +35,7 @@ class MovieDetailFragment() : Fragment() {
     lateinit var youTubePlayerFragment: YouTubePlayerSupportFragment
     lateinit var youtubePlayer: YouTubePlayer
     lateinit var videos: List<Video>
-    lateinit var pagerAdapter: MovieViewPagerAdapter
+    lateinit var pagerAdapter: BasicViewPagerAdapter
 
     companion object {
         fun newInstance() = MovieDetailFragment()
@@ -74,7 +69,7 @@ class MovieDetailFragment() : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        pagerAdapter = MovieViewPagerAdapter(
+        pagerAdapter = BasicViewPagerAdapter(
             listOf(
                 MovieDetailInfosFragment(),
                 MovieDetailCastAndCrewFragment()
@@ -94,8 +89,8 @@ class MovieDetailFragment() : Fragment() {
 
         movieDetailViewModel.videos.observe(viewLifecycleOwner, Observer {
             videos = it
-            if(it.isNotEmpty()) {
-               trailer_button.visibility = View.VISIBLE
+            if (it.isNotEmpty()) {
+                trailer_button.visibility = View.VISIBLE
             }
         })
 
@@ -143,9 +138,16 @@ class MovieDetailFragment() : Fragment() {
 
     private fun initGenres(movie: Movie) {
         movie_genres.layoutManager =
-            GridLayoutManager(context, if (movie.genres.size >= 3) 3 else movie.genres.size)
+            GridLayoutManager(context, getSpanCount(movie.genres.size))
         genreAdapter.genres = movie.genres
         genreAdapter.notifyDataSetChanged()
+    }
+
+    private fun getSpanCount(size: Int): Int {
+        if (size < MAX_SPAN_COUNT) {
+            return if (size >= 1) size else MIN_SPAN_COUNT
+        }
+        return MAX_SPAN_COUNT
     }
 
 

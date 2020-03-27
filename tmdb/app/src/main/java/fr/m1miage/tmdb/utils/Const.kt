@@ -19,6 +19,8 @@ const val ANONYMOUS_IMG_PATH =
 const val DEFAULT_MOVIE_IMG_PATH =
     "https://cdn.pixabay.com/photo/2017/11/21/22/51/award-2969422_960_720.jpg"
 const val IMDB_PERSON_PATH = "https://www.imdb.com/name/"
+const val MAX_SPAN_COUNT = 3
+const val MIN_SPAN_COUNT = 1
 
 data class Favorites(
     var movies: MutableList<MovieResponse>
