@@ -33,11 +33,6 @@ class HomeFragment : Fragment() {
         initLayoutManagers()
         initAdapters()
         initMovieLists()
-        val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
-        preferences?.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
-            println(key)
-        }
-
         return root
     }
 
@@ -108,7 +103,7 @@ class HomeFragment : Fragment() {
         movieAdapter: MovieAdapter?
     ) {
         movies.observe(viewLifecycleOwner, Observer {
-            movieAdapter?.movies = it as MutableList<MovieResponse>
+            movieAdapter?.movies = it.toMutableList()
         })
     }
 

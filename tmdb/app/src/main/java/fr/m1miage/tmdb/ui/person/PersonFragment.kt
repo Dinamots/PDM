@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.person_fragment.*
 class PersonFragment : Fragment() {
     lateinit var movieAdapter: MovieAdapter
     val personViewModel: PersonViewModel by activityViewModels()
+
     companion object {
         fun newInstance() = PersonFragment()
     }
@@ -69,7 +70,6 @@ class PersonFragment : Fragment() {
         })
 
 
-
     }
 
     private fun initView(
@@ -81,8 +81,13 @@ class PersonFragment : Fragment() {
     }
 
     private fun initText(personDetail: PersonDetail) {
-        val birthDeathString =
-            "${formatDate(personDetail.birthday)} - ${if (personDetail.deathday != null) formatDate(personDetail.deathday) else "alive"}"
+        var birthDeathString = ""
+        if (personDetail.birthday !== null) {
+            birthDeathString =
+                "${formatDate(personDetail.birthday)} - ${if (personDetail.deathday != null)
+                    formatDate(personDetail.deathday) else "alive"}"
+
+        }
         val imdbLink = IMDB_PERSON_PATH + personDetail.imdb_id
 
         person_name.text = personDetail.name

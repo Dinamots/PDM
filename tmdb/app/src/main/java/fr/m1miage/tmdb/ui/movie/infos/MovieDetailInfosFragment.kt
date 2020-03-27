@@ -85,8 +85,12 @@ class MovieDetailInfosFragment : Fragment() {
         movie: Movie
     ) {
         val preferences = activity?.getPreferences(Context.MODE_PRIVATE)
+        if (preferences!!.isFavoriteMovie(movie.toMovieReponse()) ||
+            !preferences.isFavoriteMovie(movie.toMovieReponse()) && movie_button_favorite.isChecked
+        ) {
+            movie_button_favorite.toggle()
+        }
 
-        if (preferences!!.isFavoriteMovie(movie.toMovieReponse())) movie_button_favorite.toggle()
         movie_button_favorite.setOnClickListener {
             preferences.addOrRemoveMovie(movie.toMovieReponse())
         }
@@ -103,8 +107,6 @@ class MovieDetailInfosFragment : Fragment() {
             overview.justificationMode = JUSTIFICATION_MODE_INTER_WORD
         }
     }
-
-
 
 
 }

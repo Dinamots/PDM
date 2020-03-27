@@ -17,7 +17,7 @@ data class Person(
 )
 
 data class PersonDetail(
-    val birthday: Date,
+    val birthday: Date?,
     val known_for_department: String,
     val deathday: Date?,
     val id: Int,
