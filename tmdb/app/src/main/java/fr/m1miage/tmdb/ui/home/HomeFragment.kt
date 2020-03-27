@@ -20,8 +20,9 @@ import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {
-    private val adapterMap: HashMap<kotlin.Int, MovieAdapter> = HashMap()
+    private val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
     private val homeViewModel: HomeViewModel by activityViewModels()
+
     private lateinit var root: View
 
     override fun onCreateView(
@@ -30,9 +31,9 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         root = inflater.inflate(R.layout.fragment_home, container, false)
-        initLayoutManagers()
         initAdapters()
         initMovieLists()
+        initLayoutManagers()
         return root
     }
 
@@ -78,22 +79,22 @@ class HomeFragment : Fragment() {
 
     private fun initMovieLists() {
         initMovieList(
-            homeViewModel.getNowPlayingMovies(),
+            homeViewModel.nowPlayingMovies,
             adapterMap[root.now_playing_movies.id]
         )
 
         initMovieList(
-            homeViewModel.getPopularMovies(),
+            homeViewModel.popularMovies,
             adapterMap[root.popular_movies.id]
         )
 
         initMovieList(
-            homeViewModel.getTopRatedMovies(),
+            homeViewModel.topRatedMovies,
             adapterMap[root.top_rated_movies.id]
         )
 
         initMovieList(
-            homeViewModel.getUpcomingMovies(),
+            homeViewModel.upcomingMovies,
             adapterMap[root.upcoming_movies.id]
         )
     }
@@ -104,6 +105,7 @@ class HomeFragment : Fragment() {
     ) {
         movies.observe(viewLifecycleOwner, Observer {
             movieAdapter?.movies = it.toMutableList()
+            movieAdapter?.notifyDataSetChanged()
         })
     }
 

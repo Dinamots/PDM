@@ -1,6 +1,5 @@
 package fr.m1miage.tmdb.ui.home
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import fr.m1miage.tmdb.api.RetrofitManager
@@ -10,57 +9,45 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 
 class HomeViewModel : ViewModel() {
+    val upcomingMovies: MutableLiveData<List<MovieResponse>> = MutableLiveData()
+    val topRatedMovies: MutableLiveData<List<MovieResponse>> = MutableLiveData()
+    val popularMovies: MutableLiveData<List<MovieResponse>> = MutableLiveData()
+    val nowPlayingMovies: MutableLiveData<List<MovieResponse>> = MutableLiveData()
 
-    private val upcomingMovies by lazy {
-
-        getLiveData(RetrofitManager.tmdbAPI.getUpcoming())
+    fun fetchUpcomingMovies() {
+        fetchMovie(RetrofitManager.tmdbAPI.getUpcoming(), upcomingMovies)
     }
 
-    fun getUpcomingMovies(): LiveData<List<MovieResponse>> {
-        return upcomingMovies
+    fun fetchTopRatedMovies() {
+        fetchMovie(RetrofitManager.tmdbAPI.getTopRated(), topRatedMovies)
+
     }
 
-    private val topRatedMovies by lazy {
-        getLiveData(RetrofitManager.tmdbAPI.getTopRated())
+    fun fetchPopularMovies() {
+        fetchMovie(RetrofitManager.tmdbAPI.getPopular(), popularMovies)
     }
 
-    fun getPopularMovies(): LiveData<List<MovieResponse>> {
-        return popularMovies
+    fun fetchNowPlayingMovies() {
+        fetchMovie(RetrofitManager.tmdbAPI.getNowPlaying(), nowPlayingMovies)
     }
 
-    private val popularMovies by lazy {
-        getLiveData(RetrofitManager.tmdbAPI.getPopular())
+    fun fetchAll() {
+        fetchNowPlayingMovies()
+        fetchPopularMovies()
+        fetchTopRatedMovies()
+        fetchUpcomingMovies()
     }
 
-    fun getNowPlayingMovies(): LiveData<List<MovieResponse>> {
-        return nowPlayingMovies
-    }
-
-    private val nowPlayingMovies by lazy {
-        getLiveData(RetrofitManager.tmdbAPI.getNowPlaying())
-    }
-
-    fun getTopRatedMovies(): LiveData<List<MovieResponse>> {
-        return topRatedMovies
-    }
-
-    private fun getLiveData(observable: Observable<Search<MovieResponse>>): MutableLiveData<List<MovieResponse>> {
-        println("bonjour")
-        val liveData = MutableLiveData<List<MovieResponse>>()
-        liveData.also {
-            loadMovies(liveData, observable)
-        }
-        return liveData
-    }
-
-    private fun loadMovies(
-        liveData: MutableLiveData<List<MovieResponse>>,
-        observable: Observable<Search<MovieResponse>>
+    fun fetchMovie(
+        observable: Observable<Search<MovieResponse>>,
+        movies: MutableLiveData<List<MovieResponse>>
     ) {
 
         val disposable = observable
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ res -> liveData.value = res.results }, { error -> println(error) })
+            .subscribe(
+                { search -> movies.value = (search.results); println(search.results) },
+                { err -> err.printStackTrace() }
+            )
     }
-
 }

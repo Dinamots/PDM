@@ -1,8 +1,7 @@
 package fr.m1miage.tmdb
 
-import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
 import android.os.StrictMode
 import android.view.Menu
 import android.view.MenuItem
@@ -15,6 +14,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import fr.m1miage.tmdb.ui.home.HomeViewModel
 import fr.m1miage.tmdb.ui.search.SearchViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -23,24 +23,26 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     val searchViewModel: SearchViewModel by viewModels()
+    val homeViewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build())
-        setContentView(R.layout.activity_main)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        val navController = findNavController(R.id.nav_host_fragment)
-
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_search
-            ), drawer_layout
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        nav_view.setupWithNavController(navController)
-
+        setContentView(R.layout.splash)
+        homeViewModel.fetchAll()
+        Handler().postDelayed({
+            setContentView(R.layout.activity_main)
+            val toolbar: Toolbar = findViewById(R.id.toolbar)
+            setSupportActionBar(toolbar)
+            val navController = findNavController(R.id.nav_host_fragment)
+            appBarConfiguration = AppBarConfiguration(
+                setOf(
+                    R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_search
+                ), drawer_layout
+            )
+            setupActionBarWithNavController(navController, appBarConfiguration)
+            nav_view.setupWithNavController(navController)
+        }, 3000L)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
