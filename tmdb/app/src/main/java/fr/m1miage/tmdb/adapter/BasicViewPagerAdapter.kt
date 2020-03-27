@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 
-class MovieViewPagerAdapter(
+class BasicViewPagerAdapter(
     val fragments: List<Fragment>,
     val fragmentManager: FragmentManager,
     behavior: Int

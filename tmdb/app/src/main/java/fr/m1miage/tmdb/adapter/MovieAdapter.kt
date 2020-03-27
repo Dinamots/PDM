@@ -18,6 +18,7 @@ import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.listeners.button.FavoriteButtonCheckChangeListener
 import fr.m1miage.tmdb.utils.*
 import fr.m1miage.tmdb.utils.extension.getFavorites
+import fr.m1miage.tmdb.utils.extension.getImgPath
 import kotlinx.android.synthetic.main.movie_element.view.*
 import kotlinx.android.synthetic.main.movie_element.view.movie_element_button_favorite
 import kotlinx.android.synthetic.main.movie_recycler_header.view.*
@@ -75,7 +76,7 @@ open class MovieAdapter(
         val movie = movies[position]
 
         Picasso.get()
-            .load(TMDB_IMAGES_PATH + if (movie.poster_path !== "") movie.poster_path else movie.backdrop_path)
+            .load(movie.getImgPath())
             .fit()
             .into(holder.movieImg)
         holder.movieRating.rating = movie.vote_average?.toFloat()?.div(2) ?: 0F
