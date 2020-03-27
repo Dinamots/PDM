@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -19,13 +20,16 @@ import fr.m1miage.tmdb.api.model.Credits
 import fr.m1miage.tmdb.api.model.Movie
 import fr.m1miage.tmdb.api.model.Person
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
+import fr.m1miage.tmdb.ui.person.PersonViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.movie_detail_cast_and_crew_fragment.*
+import okhttp3.internal.notifyAll
 
 class MovieDetailCastAndCrewFragment : Fragment() {
     val crewAdapter: PersonAdapter = getAdapter()
-
-
+    val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
+    val personViewModel: PersonViewModel by activityViewModels()
+    val movieDetailCastAndCrewViewModel: MovieDetailCastAndCrewViewModel by activityViewModels()
     val castAdapter: PersonAdapter = getAdapter()
 
     companion object {
@@ -33,7 +37,6 @@ class MovieDetailCastAndCrewFragment : Fragment() {
             MovieDetailCastAndCrewFragment()
     }
 
-    val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,24 +49,24 @@ class MovieDetailCastAndCrewFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
-            RetrofitManager.tmdbAPI.getCredits(it.id.toLong())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { credits: Credits -> initView(credits) },
-                    { err -> println(err) }
-                )
+            movieDetailCastAndCrewViewModel.fetchCredits(it.id)
+        })
+
+        movieDetailCastAndCrewViewModel.credits.observe(viewLifecycleOwner, Observer {
+            initView(it)
         })
     }
 
     private fun getAdapter(): PersonAdapter {
         return PersonAdapter(listOf()) {
-            println(it)
+            val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+            navController.navigate(R.id.nav_person)
+            personViewModel.person.postValue(it)
         }
     }
 
 
-    private fun initView(credits: Credits) {
-
+    private fun initView(credits: Credits<Person>) {
         initRecyclerView(credits.cast, castAdapter, cast_recycler_view)
         initRecyclerView(credits.crew, crewAdapter, crew_recycler_view)
 
@@ -75,12 +78,9 @@ class MovieDetailCastAndCrewFragment : Fragment() {
         recyclerView: RecyclerView
     ) {
         recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
-        println("height = " + recyclerView.height)
         recyclerView.adapter = adapter
         adapter.persons = persons
         adapter.notifyDataSetChanged()
-
-
     }
 
 

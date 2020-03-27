@@ -3,7 +3,6 @@ package fr.m1miage.tmdb.ui.movie.infos
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.text.Layout.JUSTIFICATION_MODE_INTER_WORD
 import androidx.fragment.app.Fragment
@@ -17,14 +16,12 @@ import com.squareup.picasso.Picasso
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.Movie
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
-import fr.m1miage.tmdb.utils.IMDB_PATH
-import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
+import fr.m1miage.tmdb.utils.IMDB_MOVIE_PATH
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
+import fr.m1miage.tmdb.utils.extension.getImgPath
 import fr.m1miage.tmdb.utils.extension.isFavoriteMovie
 import fr.m1miage.tmdb.utils.extension.toMovieReponse
-import kotlinx.android.synthetic.main.movie_detail_fragment.*
 import kotlinx.android.synthetic.main.movie_detail_infos_fragment.*
-import java.text.SimpleDateFormat
 
 class MovieDetailInfosFragment : Fragment() {
 
@@ -58,7 +55,7 @@ class MovieDetailInfosFragment : Fragment() {
 
     private fun getMovieImg(movie: Movie) {
         Picasso.get()
-            .load(TMDB_IMAGES_PATH + if (movie.poster_path !== "") movie.poster_path else movie.backdrop_path)
+            .load(movie.getImgPath())
             .fit()
             .into(movie_img)
 
@@ -72,7 +69,7 @@ class MovieDetailInfosFragment : Fragment() {
                     Intent.EXTRA_TEXT,
                     "${movie.title} \n" +
                             " ${movie.homepage} \n" +
-                            " ${IMDB_PATH + movie.imdb_id} \n" +
+                            " ${IMDB_MOVIE_PATH + movie.imdb_id} \n" +
                             " ${movie.vote_average / 2} / 5 "
                 )
                 type = "text/plain"
@@ -88,8 +85,12 @@ class MovieDetailInfosFragment : Fragment() {
         movie: Movie
     ) {
         val preferences = activity?.getPreferences(Context.MODE_PRIVATE)
+        if (preferences!!.isFavoriteMovie(movie.toMovieReponse()) ||
+            !preferences.isFavoriteMovie(movie.toMovieReponse()) && movie_button_favorite.isChecked
+        ) {
+            movie_button_favorite.toggle()
+        }
 
-        if (preferences!!.isFavoriteMovie(movie.toMovieReponse())) movie_button_favorite.toggle()
         movie_button_favorite.setOnClickListener {
             preferences.addOrRemoveMovie(movie.toMovieReponse())
         }
@@ -106,8 +107,6 @@ class MovieDetailInfosFragment : Fragment() {
             overview.justificationMode = JUSTIFICATION_MODE_INTER_WORD
         }
     }
-
-
 
 
 }

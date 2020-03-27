@@ -33,11 +33,6 @@ class HomeFragment : Fragment() {
         initLayoutManagers()
         initAdapters()
         initMovieLists()
-        val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
-        preferences?.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
-            println(key)
-        }
-
         return root
     }
 
@@ -108,7 +103,7 @@ class HomeFragment : Fragment() {
         movieAdapter: MovieAdapter?
     ) {
         movies.observe(viewLifecycleOwner, Observer {
-            movieAdapter?.movies = it as MutableList<MovieResponse>
+            movieAdapter?.movies = it.toMutableList()
         })
     }
 
@@ -122,7 +117,7 @@ class HomeFragment : Fragment() {
                 val navController = findNavController(activity!!, R.id.nav_host_fragment)
                 val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
                 navController.navigate(R.id.nav_movie_detail)
-                movieDetailViewModel.movieId.value = it.id
+                movieDetailViewModel.movieId.postValue(it.id)
             }
         ) { movieResponse, _ ->
             preferences?.addOrRemoveMovie(movieResponse)

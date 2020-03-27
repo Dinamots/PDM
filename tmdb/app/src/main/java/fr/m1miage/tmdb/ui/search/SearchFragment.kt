@@ -47,31 +47,13 @@ class SearchFragment : Fragment() {
         searchViewModel.searchSting.observe(viewLifecycleOwner, Observer {
             searchString = it
             currentPage = 1
-            RetrofitManager.tmdbAPI.searchMovies(it, currentPage)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { res ->
-                        adapter.movies = res.results.toMutableList()
-                        adapter.notifyDataSetChanged()
-
-                        totalPages = res.total_pages!!
-                    },
-                    { error -> error.printStackTrace() }
-                )
+            searchViewModel.fetchMovies(searchString, currentPage)
         })
+
         search_recycler_view.addOnScrollListener(object : PaginationListener(layout) {
             override fun loadMoreItems() {
                 currentPage++
-                val disposable = RetrofitManager.tmdbAPI.searchMovies(searchString, currentPage)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { res ->
-                            adapter.movies.addAll(res.results.toMutableList())
-                            adapter.notifyDataSetChanged()
-                        },
-                        { error -> error.printStackTrace() }
-                    )
-
+                searchViewModel.fetchMovies(searchString, currentPage)
             }
 
             override fun isLastPage(): Boolean {
@@ -82,6 +64,15 @@ class SearchFragment : Fragment() {
                 return false
             }
 
+        })
+
+        searchViewModel.movies.observe(viewLifecycleOwner, Observer {
+            adapter.movies = it.toMutableList()
+            adapter.notifyDataSetChanged()
+        })
+
+        searchViewModel.totalPages.observe(viewLifecycleOwner, Observer {
+            totalPages = it
         })
     }
 

@@ -3,6 +3,8 @@ package fr.m1miage.tmdb.utils.extension
 import fr.m1miage.tmdb.api.model.Genre
 import fr.m1miage.tmdb.api.model.Movie
 import fr.m1miage.tmdb.api.model.MovieResponse
+import fr.m1miage.tmdb.utils.DEFAULT_MOVIE_IMG_PATH
+import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
 
 fun Movie.toMovieReponse(): MovieResponse {
     return MovieResponse(
@@ -27,3 +29,6 @@ fun Movie.toMovieReponse(): MovieResponse {
         title = title
     )
 }
+
+fun Movie.getImgPath() =
+    if (this.poster_path == null) DEFAULT_MOVIE_IMG_PATH else TMDB_IMAGES_PATH + this.poster_path
