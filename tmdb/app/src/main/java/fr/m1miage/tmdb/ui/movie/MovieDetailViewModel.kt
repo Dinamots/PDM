@@ -1,45 +1,44 @@
 package fr.m1miage.tmdb.ui.movie
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import fr.m1miage.tmdb.FetchViewModel
 import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.Movie
-import fr.m1miage.tmdb.api.model.MovieResponse
-import fr.m1miage.tmdb.api.model.Search
 import fr.m1miage.tmdb.api.model.Video
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 
-class MovieDetailViewModel : ViewModel() {
+class MovieDetailViewModel : FetchViewModel() {
     val movieId = MutableLiveData<Int>()
     var movie = MutableLiveData<Movie>()
     var videos = MutableLiveData<List<Video>>()
-    val isLoading = MutableLiveData<Boolean>()
+    val onLoadingMovie = MutableLiveData<Boolean>()
+    val onLoadingVideos = MutableLiveData<Boolean>()
+    val onErrorMovie = MutableLiveData<Boolean>()
+    val onVideosError = MutableLiveData<Boolean>()
 
     fun fetchMovie(id: Int) {
-        isLoading.postValue(true)
-        val disposable =
-            RetrofitManager.tmdbAPI.getMovie(id.toLong())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { mv -> movie.postValue(mv); isLoading.postValue(false) },
-                    { error -> error.printStackTrace()}
-                )
+        fetchData(
+            RetrofitManager.tmdbAPI.getMovie(id.toLong()),
+            movie,
+            onLoadingMovie,
+            onErrorMovie
+        )
     }
 
     fun fetchVideos(id: Int) {
-        val disposable = RetrofitManager.tmdbAPI.getVideos(id.toLong())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { search -> videos.postValue(search.results) },
-                { error -> error.printStackTrace() }
-            )
+        fetchSearch(
+            RetrofitManager.tmdbAPI.getVideos(id.toLong()),
+            videos,
+            null,
+            onLoadingVideos,
+            onVideosError
+        )
     }
 
     fun fetchAll(id: Int) {
         fetchVideos(id)
         fetchMovie(id)
     }
+
 
 }

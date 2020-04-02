@@ -15,6 +15,7 @@ import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
+import fr.m1miage.tmdb.utils.MAX_SPAN_COUNT
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import fr.m1miage.tmdb.utils.extension.getFavorites
 import kotlinx.android.synthetic.main.fragment_favorites.view.*
@@ -31,7 +32,7 @@ class FavoritesFragment : Fragment() {
 
         root = inflater.inflate(R.layout.fragment_favorites, container, false)
         val sharedPreferences = activity?.getPreferences(Context.MODE_PRIVATE)
-        root.favorites_recycler_view?.layoutManager = GridLayoutManager(context, 3)
+        root.favorites_recycler_view?.layoutManager = GridLayoutManager(context, MAX_SPAN_COUNT)
 
         root.favorites_recycler_view?.adapter =
             MovieAdapter(

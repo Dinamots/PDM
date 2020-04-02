@@ -38,6 +38,7 @@ class HomeFragment : Fragment() {
     }
 
 
+
     private fun initLayoutManagers() {
         root.top_rated_movies?.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

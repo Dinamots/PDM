@@ -2,13 +2,14 @@ package fr.m1miage.tmdb.ui.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import fr.m1miage.tmdb.FetchViewModel
 import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.api.model.Search
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel : FetchViewModel() {
     val upcomingMovies: MutableLiveData<List<MovieResponse>> = MutableLiveData()
     val topRatedMovies: MutableLiveData<List<MovieResponse>> = MutableLiveData()
     val popularMovies: MutableLiveData<List<MovieResponse>> = MutableLiveData()
@@ -24,18 +25,20 @@ class HomeViewModel : ViewModel() {
 
 
     fun fetchUpcomingMovies() {
-        fetchMovie(
+        fetchSearch(
             RetrofitManager.tmdbAPI.getUpcoming(),
             upcomingMovies,
+            null,
             onLoadUpcoming,
             onErrorUpcoming
         )
     }
 
     fun fetchTopRatedMovies() {
-        fetchMovie(
+        fetchSearch(
             RetrofitManager.tmdbAPI.getTopRated(),
             topRatedMovies,
+            null,
             onLoadTopRated,
             onErrorTopRated
         )
@@ -43,18 +46,20 @@ class HomeViewModel : ViewModel() {
     }
 
     fun fetchPopularMovies() {
-        fetchMovie(
+        fetchSearch(
             RetrofitManager.tmdbAPI.getPopular(),
             popularMovies,
+            null,
             onLoadPopular,
             onErrorPopular
         )
     }
 
     fun fetchNowPlayingMovies() {
-        fetchMovie(
+        fetchSearch(
             RetrofitManager.tmdbAPI.getNowPlaying(),
             nowPlayingMovies,
+            null,
             onLoadNowPlaying,
             onErrorNowPlaying
         )
@@ -65,20 +70,5 @@ class HomeViewModel : ViewModel() {
         fetchPopularMovies()
         fetchTopRatedMovies()
         fetchUpcomingMovies()
-    }
-
-    fun fetchMovie(
-        observable: Observable<Search<MovieResponse>>,
-        movies: MutableLiveData<List<MovieResponse>>,
-        onLoad: MutableLiveData<Boolean>,
-        onError: MutableLiveData<Boolean>
-    ) {
-        onLoad.postValue(true)
-        val disposable = observable
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { search -> movies.value = (search.results); onLoad.postValue(false) },
-                { onError.postValue(true) }
-            )
     }
 }
