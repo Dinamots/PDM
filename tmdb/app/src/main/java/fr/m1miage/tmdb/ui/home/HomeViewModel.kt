@@ -13,22 +13,51 @@ class HomeViewModel : ViewModel() {
     val topRatedMovies: MutableLiveData<List<MovieResponse>> = MutableLiveData()
     val popularMovies: MutableLiveData<List<MovieResponse>> = MutableLiveData()
     val nowPlayingMovies: MutableLiveData<List<MovieResponse>> = MutableLiveData()
+    val onLoadUpcoming: MutableLiveData<Boolean> = MutableLiveData()
+    val onLoadTopRated: MutableLiveData<Boolean> = MutableLiveData()
+    val onLoadPopular: MutableLiveData<Boolean> = MutableLiveData()
+    val onLoadNowPlaying: MutableLiveData<Boolean> = MutableLiveData()
+    val onErrorUpcoming: MutableLiveData<Boolean> = MutableLiveData()
+    val onErrorTopRated: MutableLiveData<Boolean> = MutableLiveData()
+    val onErrorPopular: MutableLiveData<Boolean> = MutableLiveData()
+    val onErrorNowPlaying: MutableLiveData<Boolean> = MutableLiveData()
+
 
     fun fetchUpcomingMovies() {
-        fetchMovie(RetrofitManager.tmdbAPI.getUpcoming(), upcomingMovies)
+        fetchMovie(
+            RetrofitManager.tmdbAPI.getUpcoming(),
+            upcomingMovies,
+            onLoadUpcoming,
+            onErrorUpcoming
+        )
     }
 
     fun fetchTopRatedMovies() {
-        fetchMovie(RetrofitManager.tmdbAPI.getTopRated(), topRatedMovies)
+        fetchMovie(
+            RetrofitManager.tmdbAPI.getTopRated(),
+            topRatedMovies,
+            onLoadTopRated,
+            onErrorTopRated
+        )
 
     }
 
     fun fetchPopularMovies() {
-        fetchMovie(RetrofitManager.tmdbAPI.getPopular(), popularMovies)
+        fetchMovie(
+            RetrofitManager.tmdbAPI.getPopular(),
+            popularMovies,
+            onLoadPopular,
+            onErrorPopular
+        )
     }
 
     fun fetchNowPlayingMovies() {
-        fetchMovie(RetrofitManager.tmdbAPI.getNowPlaying(), nowPlayingMovies)
+        fetchMovie(
+            RetrofitManager.tmdbAPI.getNowPlaying(),
+            nowPlayingMovies,
+            onLoadNowPlaying,
+            onErrorNowPlaying
+        )
     }
 
     fun fetchAll() {
@@ -40,14 +69,16 @@ class HomeViewModel : ViewModel() {
 
     fun fetchMovie(
         observable: Observable<Search<MovieResponse>>,
-        movies: MutableLiveData<List<MovieResponse>>
+        movies: MutableLiveData<List<MovieResponse>>,
+        onLoad: MutableLiveData<Boolean>,
+        onError: MutableLiveData<Boolean>
     ) {
-
+        onLoad.postValue(true)
         val disposable = observable
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { search -> movies.value = (search.results); println(search.results) },
-                { err -> err.printStackTrace() }
+                { search -> movies.value = (search.results); onLoad.postValue(false) },
+                { onError.postValue(true) }
             )
     }
 }

@@ -37,12 +37,12 @@ class MainActivity : AppCompatActivity() {
             val navController = findNavController(R.id.nav_host_fragment)
             appBarConfiguration = AppBarConfiguration(
                 setOf(
-                    R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_search
+                    R.id.nav_home, R.id.nav_favorite, R.id.nav_search
                 ), drawer_layout
             )
             setupActionBarWithNavController(navController, appBarConfiguration)
             nav_view.setupWithNavController(navController)
-        }, 3000L)
+        }, 300L)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

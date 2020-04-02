@@ -33,11 +33,11 @@
             app:popUpTo="@id/nav_home" />
     </fragment>
 
-    <fragment
+    <!-- <fragment
         android:id="@+id/nav_gallery"
         android:name="fr.m1miage.tmdb.ui.gallery.GalleryFragment"
         android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_gallery" /> -->
 
     <fragment
         android:id="@+id/nav_search"
@@ -46,9 +46,9 @@
         tools:layout="@layout/search_fragment" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
+        android:id="@+id/nav_favorite"
         android:name="fr.m1miage.tmdb.ui.favorites.FavoritesFragment"
         android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites"/>
 
 </navigation>
