@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerSupportFragment
 import com.squareup.picasso.Picasso
@@ -77,11 +78,12 @@ class MovieDetailFragment() : Fragment() {
         )
         movie_genres.apply { setHasFixedSize(true); adapter = genreAdapter }
         initTabs()
+        initYoutubePlayer()
+
         movieDetailViewModel.movieId.observe(viewLifecycleOwner, Observer {
             movieDetailViewModel.fetchAll(it)
         })
 
-        initYoutubePlayer()
 
         movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
             initView(it)

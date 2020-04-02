@@ -1,12 +1,14 @@
 package fr.m1miage.tmdb
 
-import androidx.lifecycle.LiveData
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import fr.m1miage.tmdb.api.RetrofitManager
+import androidx.lifecycle.viewModelScope
+import com.google.android.material.snackbar.Snackbar
 import fr.m1miage.tmdb.api.model.Search
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+
 
 abstract class FetchViewModel : ViewModel() {
     fun <T> fetchSearch(
@@ -39,8 +41,7 @@ abstract class FetchViewModel : ViewModel() {
                     liveData.postValue(data)
                     loading.postValue(true)
                 },
-                { error.postValue(true) }
+                { error.postValue(true);  }
             )
-
     }
 }

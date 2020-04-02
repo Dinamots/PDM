@@ -1,5 +1,9 @@
 package fr.m1miage.tmdb
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.StrictMode
@@ -9,6 +13,7 @@ import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -16,6 +21,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import fr.m1miage.tmdb.ui.home.HomeViewModel
 import fr.m1miage.tmdb.ui.search.SearchViewModel
+import fr.m1miage.tmdb.utils.snack
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -24,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     val searchViewModel: SearchViewModel by viewModels()
     val homeViewModel: HomeViewModel by viewModels()
-
+    var current: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build())
@@ -32,9 +38,18 @@ class MainActivity : AppCompatActivity() {
         homeViewModel.fetchAll()
         Handler().postDelayed({
             setContentView(R.layout.activity_main)
+            initConnectivityManager()
             val toolbar: Toolbar = findViewById(R.id.toolbar)
             setSupportActionBar(toolbar)
             val navController = findNavController(R.id.nav_host_fragment)
+            homeViewModel.onErrorUpcoming.observe(this, Observer {
+                snack(this.findViewById(android.R.id.content)!!," And error as occured, please retry") {}
+//                navController.navigate(R.id.nav_no_internet)
+            })
+
+            navController.addOnDestinationChangedListener { controller, destination, arguments ->
+               current = destination.id
+            }
             appBarConfiguration = AppBarConfiguration(
                 setOf(
                     R.id.nav_home, R.id.nav_favorite, R.id.nav_search
@@ -44,6 +59,29 @@ class MainActivity : AppCompatActivity() {
             nav_view.setupWithNavController(navController)
         }, 300L)
     }
+
+    private fun initConnectivityManager() {
+        val navController = findNavController(R.id.nav_host_fragment)
+        val self = this
+        val connectivityManager =
+            baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            connectivityManager.registerDefaultNetworkCallback(object :
+                ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    homeViewModel.fetchAll()
+                    navController.navigate(current)
+                    ConnectionManager.isConnected.postValue(true)
+                }
+
+                override fun onLost(network: Network?) {
+                    snack(self.findViewById(android.R.id.content)!!, "Internet connection lost") {}
+                    ConnectionManager.isConnected.postValue(false)
+                }
+            })
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)

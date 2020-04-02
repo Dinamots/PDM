@@ -34,22 +34,22 @@ open class MovieAdapter(
 ) : Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
-        const val TYPE_HEADER: kotlin.Int = 0
-        const val TYPE_ITEM: kotlin.Int = 1
-        const val TYPE_LOADING: kotlin.Int = 2
+        const val TYPE_HEADER: Int = 0
+        const val TYPE_ITEM: Int = 1
+        const val TYPE_LOADING: Int = 2
     }
 
-    override fun getItemViewType(position: kotlin.Int): kotlin.Int {
+    override fun getItemViewType(position: Int): Int {
         return if (position == 0 && headerStr != null) TYPE_HEADER else TYPE_ITEM
 
     }
 
-    override fun getItemCount(): kotlin.Int = movies.size
+    override fun getItemCount(): Int = movies.size
 
-    private fun getLayoutId(viewType: kotlin.Int): kotlin.Int =
+    private fun getLayoutId(viewType: Int): Int =
         if (viewType == TYPE_HEADER) R.layout.movie_recycler_header else R.layout.movie_element
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: kotlin.Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view: View = LayoutInflater
             .from(parent.context)
             .inflate(getLayoutId(viewType), parent, false)
@@ -57,7 +57,7 @@ open class MovieAdapter(
     }
 
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: kotlin.Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ItemViewHolder) {
             initItemViewHolder(position, holder)
         }
@@ -72,7 +72,7 @@ open class MovieAdapter(
         holder.textView.text = headerStr
     }
 
-    open fun initItemViewHolder(position: kotlin.Int, holder: ItemViewHolder) {
+    open fun initItemViewHolder(position: Int, holder: ItemViewHolder) {
         val movie = movies[position]
 
         Picasso.get()

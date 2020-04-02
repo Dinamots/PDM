@@ -1,5 +1,7 @@
 package fr.m1miage.tmdb.utils
 
+import android.view.View
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.*
 import fr.m1miage.tmdb.api.model.MovieResponse
 import java.lang.reflect.Type
@@ -43,3 +45,10 @@ val gson = GsonBuilder().registerTypeAdapter(Date::class.java, object : JsonDese
 }).serializeNulls().create()
 
 fun formatDate(date: Date) = SimpleDateFormat("dd-MM-yyyy").format(date)
+
+fun snack(view: View, msg: String, action: () -> Unit) {
+    val snackbar: Snackbar = Snackbar
+        .make(view, msg, Snackbar.LENGTH_LONG)
+        .setAction("RETRY") { action() }
+    snackbar.show()
+}
