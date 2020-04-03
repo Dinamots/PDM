@@ -1,6 +1,7 @@
 package fr.m1miage.tmdb.ui.home
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,13 +16,19 @@ import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
+import fr.m1miage.tmdb.utils.MOVIE_MAP_PLAYING_KEY
+import fr.m1miage.tmdb.utils.MOVIE_MAP_POPULAR_KEY
+import fr.m1miage.tmdb.utils.MOVIE_MAP_TOP_KEY
+import fr.m1miage.tmdb.utils.MOVIE_MAP_UPCOMING_KEY
+import fr.m1miage.tmdb.utils.extension.addMovieList
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
+import fr.m1miage.tmdb.utils.extension.getMovieMap
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {
     private val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
     private val homeViewModel: HomeViewModel by activityViewModels()
-
+    private lateinit var preferences: SharedPreferences
     private lateinit var root: View
 
     override fun onCreateView(
@@ -30,6 +37,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         root = inflater.inflate(R.layout.fragment_home, container, false)
+        preferences = activity?.getPreferences(Context.MODE_PRIVATE)!!
         initAdapters()
         initMovieLists()
         initLayoutManagers()
@@ -83,37 +91,55 @@ class HomeFragment : Fragment() {
     private fun initMovieLists() {
         initMovieList(
             homeViewModel.nowPlayingMovies,
-            adapterMap[root.now_playing_movies.id]
+            homeViewModel.onErrorNowPlaying,
+            adapterMap[root.now_playing_movies.id],
+            MOVIE_MAP_PLAYING_KEY
         )
 
         initMovieList(
             homeViewModel.popularMovies,
-            adapterMap[root.popular_movies.id]
+            homeViewModel.onErrorPopular,
+            adapterMap[root.popular_movies.id],
+            MOVIE_MAP_POPULAR_KEY
         )
 
         initMovieList(
             homeViewModel.topRatedMovies,
-            adapterMap[root.top_rated_movies.id]
+            homeViewModel.onErrorTopRated,
+            adapterMap[root.top_rated_movies.id],
+            MOVIE_MAP_TOP_KEY
         )
 
         initMovieList(
             homeViewModel.upcomingMovies,
-            adapterMap[root.upcoming_movies.id]
+            homeViewModel.onErrorUpcoming,
+            adapterMap[root.upcoming_movies.id],
+            MOVIE_MAP_UPCOMING_KEY
         )
     }
 
     private fun initMovieList(
         movies: LiveData<List<MovieResponse>>,
-        movieAdapter: MovieAdapter?
+        error: MutableLiveData<Boolean>,
+        movieAdapter: MovieAdapter?,
+        key: String
     ) {
         movies.observe(viewLifecycleOwner, Observer {
+            preferences.addMovieList(it,key)
             movieAdapter?.movies = it.toMutableList()
             movieAdapter?.notifyDataSetChanged()
         })
+
+        error.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                movieAdapter?.movies = preferences.getMovieMap()[key]?.toMutableList()!!
+                movieAdapter?.notifyDataSetChanged()
+            }
+        })
+
     }
 
     private fun getAdapter(headerString: String): MovieAdapter {
-        val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
         return MovieAdapter(
             mutableListOf(),
             headerString,
@@ -125,7 +151,7 @@ class HomeFragment : Fragment() {
                 movieDetailViewModel.movieId.postValue(it.id)
             }
         ) { movieResponse, _ ->
-            preferences?.addOrRemoveMovie(movieResponse)
+            preferences.addOrRemoveMovie(movieResponse)
         }
 
     }

@@ -57,16 +57,23 @@ class PersonFragment : Fragment() {
         { _, _ -> }
 
         personViewModel.person.observe(viewLifecycleOwner, Observer {
-            personViewModel.fecthPersonDetail(it.id)
-            personViewModel.fetchFilmography(it.id)
+            if (it != null) {
+                println(it)
+                personViewModel.fecthPersonDetail(it.id)
+                personViewModel.fetchFilmography(it.id)
+            }
         })
 
         personViewModel.personDetail.observe(viewLifecycleOwner, Observer {
-            initView(it)
+            if(it != null) {
+                initView(it)
+            }
         })
 
         personViewModel.filmography.observe(viewLifecycleOwner, Observer {
-            initMovieList(it)
+            if(it != null) {
+                initMovieList(it)
+            }
         })
 
 
@@ -110,6 +117,13 @@ class PersonFragment : Fragment() {
         person_filmography.adapter = movieAdapter
         movieAdapter.movies = movieResponseList.toMutableList()
         movieAdapter.notifyDataSetChanged()
+    }
+
+    override fun onStop() {
+        /* personViewModel.person.postValue(null)
+        personViewModel.personDetail.postValue(null)
+        personViewModel.filmography.postValue(null) */
+        super.onStop()
     }
 
 }

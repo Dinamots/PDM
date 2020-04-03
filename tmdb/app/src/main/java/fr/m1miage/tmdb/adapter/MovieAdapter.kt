@@ -73,6 +73,7 @@ open class MovieAdapter(
     }
 
     open fun initItemViewHolder(position: Int, holder: ItemViewHolder) {
+        println(movies)
         val movie = movies[position]
 
         Picasso.get()

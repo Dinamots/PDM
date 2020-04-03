@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
@@ -30,7 +32,7 @@ import kotlinx.android.synthetic.main.movie_element.*
 import java.text.SimpleDateFormat
 
 
-class MovieDetailFragment() : Fragment() {
+class MovieDetailFragment : Fragment() {
     val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
     val genreAdapter: GenreAdapter = GenreAdapter(listOf())
     lateinit var youTubePlayerFragment: YouTubePlayerSupportFragment
@@ -137,6 +139,7 @@ class MovieDetailFragment() : Fragment() {
         initTrailerButton()
         movie_rating.rating = (movie.vote_average / 2).toFloat()
 
+
     }
 
     private fun initTrailerButton() {
@@ -184,30 +187,14 @@ class MovieDetailFragment() : Fragment() {
             .into(movie_backdrop)
     }
 
-    override fun onDestroy() {
-
-        super.onDestroy()
-
-    }
-
     override fun onStop() {
-        movieDetailViewModel.movie.postValue(null)
+        // movieDetailViewModel.movie.postValue(null)
         movie_title.text = ""
         release.text = ""
         movie_rating.rating = 0F
         genreAdapter.genres = listOf()
         genreAdapter.notifyDataSetChanged()
         super.onStop()
-    }
-
-    override fun onDestroyView() {
-        movie_title.text = ""
-        release.text = ""
-        movie_rating.rating = 0F
-        genreAdapter.genres = listOf()
-        genreAdapter.notifyDataSetChanged()
-        super.onDestroyView()
-
     }
 
 }

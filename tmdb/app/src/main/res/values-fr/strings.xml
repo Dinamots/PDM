@@ -13,6 +13,7 @@
     <string name="share">Partager</string>
     <string name="trailer">Bande d\'annonce</string>
     <string name="favorite">Favoris</string>
-    <string name="error_occured">Une erreur est survenue,rééssayez s\'il vous plait.</string>
+    <string name="error_occured">Une erreur est survenue, réessayez .</string>
+    <string name="connection_needed">Vous devez être connecté à internet, réessayez.</string>
 
 </resources>

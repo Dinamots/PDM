@@ -26,5 +26,6 @@
     <string name="share">Share</string>
     <string name="trailer">Trailer</string>
     <string name="favorite">Favorite</string>
-    <string name="error_occured">An error as occured, please retry.</string>
+    <string name="error_occured">An error as occurred, please retry.</string>
+    <string name="connection_needed">Internet connection needed, please retry.</string>
 </resources>

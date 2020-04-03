@@ -19,6 +19,12 @@ const val API_KEY = "ec254d6e8ac3b46e270afe8da4bb0d5d"
 const val GOOFLE_API_KEY = "AIzaSyArQzig__mI5KngXeX5Zire4RZl74X739U"
 const val TMDB_IMAGES_PATH = "https://image.tmdb.org/t/p/original"
 const val FAVORITES_SHARED_KEY = "FAVORITES"
+const val MOVIE_MAP_SHARED_KEY = "MOVIES"
+const val MOVIE_MAP_UPCOMING_KEY = "UPCOMING"
+const val MOVIE_MAP_TOP_KEY = "TOP"
+const val MOVIE_MAP_POPULAR_KEY = "POPULAR"
+const val MOVIE_MAP_PLAYING_KEY = "PLAYING"
+
 const val IMDB_MOVIE_PATH = "https://www.imdb.com/title/"
 const val ANONYMOUS_IMG_PATH =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
@@ -51,10 +57,9 @@ val gson = GsonBuilder().registerTypeAdapter(Date::class.java, object : JsonDese
 
 fun formatDate(date: Date) = SimpleDateFormat("dd-MM-yyyy").format(date)
 
-fun snack(view: View, msg: String, action: () -> Unit) {
+fun snack(view: View, msg: String) {
     val snackbar: Snackbar = Snackbar
         .make(view, msg, Snackbar.LENGTH_LONG)
-        .setAction("RETRY") { action() }
     snackbar.show()
 }
 

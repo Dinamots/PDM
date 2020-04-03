@@ -10,11 +10,13 @@ import android.os.StrictMode
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -31,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     val searchViewModel: SearchViewModel by viewModels()
     val homeViewModel: HomeViewModel by viewModels()
-    var current: Int = 0
+    var currentNav: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build())
@@ -44,23 +46,24 @@ class MainActivity : AppCompatActivity() {
             setSupportActionBar(toolbar)
             val navController = findNavController(R.id.nav_host_fragment)
             homeViewModel.onErrorUpcoming.observe(this, Observer {
-                if(it) {
+                if (it) {
                     snack(
                         this.findViewById(android.R.id.content)!!,
-                        " And error as occured, please retry"
-                    ) {}
+                        getString(R.string.connection_needed)
+                    )
                     homeViewModel.onErrorUpcoming.postValue(false)
                 }
             })
 
-            navController.addOnDestinationChangedListener { controller, destination, arguments ->
-                current = destination.id
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                currentNav = destination.id
             }
             appBarConfiguration = AppBarConfiguration(
                 setOf(
                     R.id.nav_home, R.id.nav_favorite, R.id.nav_search
                 ), drawer_layout
             )
+
             setupActionBarWithNavController(navController, appBarConfiguration)
             nav_view.setupWithNavController(navController)
         }, 300L)
@@ -76,18 +79,15 @@ class MainActivity : AppCompatActivity() {
                 ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     homeViewModel.fetchAll()
-                    if (current != 0) {
-                        val nav = current
+                    if (currentNav != 0) {
+                        val nav = currentNav
                         runOnUiThread { navController.popBackStack();navController.navigate(nav) }
                     }
                     ConnectionManager.isConnected.postValue(true)
                 }
 
                 override fun onLost(network: Network?) {
-                    val nav = current
-                    snack(self.findViewById(android.R.id.content)!!, "Internet connection lost") {
-                        runOnUiThread { navController.popBackStack();navController.navigate(nav) }
-                    }
+                    snack(self.findViewById(android.R.id.content)!!, "Internet connection lost")
                     ConnectionManager.isConnected.postValue(false)
                 }
 
@@ -144,6 +144,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }

@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import fr.m1miage.tmdb.ConnectionManager
 
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.PersonAdapter
@@ -21,6 +22,7 @@ import fr.m1miage.tmdb.api.model.Movie
 import fr.m1miage.tmdb.api.model.Person
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.ui.person.PersonViewModel
+import fr.m1miage.tmdb.utils.snack
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.movie_detail_cast_and_crew_fragment.*
 import okhttp3.internal.notifyAll
@@ -61,9 +63,14 @@ class MovieDetailCastAndCrewFragment : Fragment() {
 
     private fun getAdapter(): PersonAdapter {
         return PersonAdapter(mutableListOf()) {
-            val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
-            navController.navigate(R.id.nav_person)
-            personViewModel.person.postValue(it)
+            if(ConnectionManager.isConnected.value == true) {
+                val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+                navController.navigate(R.id.nav_person)
+                personViewModel.person.postValue(it)
+            } else {
+                snack(view!!,getString(R.string.connection_needed))
+            }
+
         }
     }
 
