@@ -49,7 +49,9 @@ class MovieDetailCastAndCrewFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
-            movieDetailCastAndCrewViewModel.fetchCredits(it.id)
+            if (it != null) {
+                movieDetailCastAndCrewViewModel.fetchCredits(it.id)
+            }
         })
 
         movieDetailCastAndCrewViewModel.credits.observe(viewLifecycleOwner, Observer {

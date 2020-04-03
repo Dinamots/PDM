@@ -13,6 +13,7 @@ import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -43,12 +44,17 @@ class MainActivity : AppCompatActivity() {
             setSupportActionBar(toolbar)
             val navController = findNavController(R.id.nav_host_fragment)
             homeViewModel.onErrorUpcoming.observe(this, Observer {
-                snack(this.findViewById(android.R.id.content)!!," And error as occured, please retry") {}
-//                navController.navigate(R.id.nav_no_internet)
+                if(it) {
+                    snack(
+                        this.findViewById(android.R.id.content)!!,
+                        " And error as occured, please retry"
+                    ) {}
+                    homeViewModel.onErrorUpcoming.postValue(false)
+                }
             })
 
             navController.addOnDestinationChangedListener { controller, destination, arguments ->
-               current = destination.id
+                current = destination.id
             }
             appBarConfiguration = AppBarConfiguration(
                 setOf(
@@ -70,14 +76,22 @@ class MainActivity : AppCompatActivity() {
                 ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     homeViewModel.fetchAll()
-                    navController.navigate(current)
+                    if (current != 0) {
+                        val nav = current
+                        runOnUiThread { navController.popBackStack();navController.navigate(nav) }
+                    }
                     ConnectionManager.isConnected.postValue(true)
                 }
 
                 override fun onLost(network: Network?) {
-                    snack(self.findViewById(android.R.id.content)!!, "Internet connection lost") {}
+                    val nav = current
+                    snack(self.findViewById(android.R.id.content)!!, "Internet connection lost") {
+                        runOnUiThread { navController.popBackStack();navController.navigate(nav) }
+                    }
                     ConnectionManager.isConnected.postValue(false)
                 }
+
+
             })
         }
     }
@@ -85,7 +99,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
-        // SearchView((baseContext as MainActivity).supportActionBar?.themedContext ?: baseContext)
         val search = menu.findItem(R.id.search)
         val searchView: SearchView = search.actionView as SearchView
         searchView.isIconified = false
@@ -123,7 +136,6 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
-
 
 
     private fun navigate(destinationId: Int) {

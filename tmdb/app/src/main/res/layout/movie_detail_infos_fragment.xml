@@ -74,7 +74,6 @@
                 android:id="@+id/tagline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="tagline"
                 android:textSize="18sp"
                 android:textStyle="bold|italic" />
 
@@ -83,7 +82,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tagline"
-                android:text="Overview"
                 android:textSize="15sp"
 
                 />
@@ -91,5 +89,7 @@
 
 
     </RelativeLayout>
+
+
 
 </FrameLayout>

@@ -41,7 +41,9 @@ class MovieDetailInfosFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
-            initView(it)
+            if(it != null) {
+                initView(it)
+            }
         })
     }
 

@@ -18,14 +18,16 @@ abstract class FetchViewModel : ViewModel() {
         loading: MutableLiveData<Boolean>,
         error: MutableLiveData<Boolean>
     ) {
+        loading.postValue(true)
         val dispoable = observable.observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { search ->
                     liveData.postValue(search.results)
                     pages?.postValue(search.total_pages)
-                    loading.postValue(true)
+                    loading.postValue(false)
+                    error.postValue(false)
                 },
-                { error.postValue(true) }
+                {error.postValue(true) }
             )
     }
 
@@ -35,13 +37,15 @@ abstract class FetchViewModel : ViewModel() {
         loading: MutableLiveData<Boolean>,
         error: MutableLiveData<Boolean>
     ) {
+        loading.postValue(true)
         val dispoable = observable.observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { data ->
                     liveData.postValue(data)
-                    loading.postValue(true)
+                    loading.postValue(false)
+                    error.postValue(false)
                 },
-                { error.postValue(true);  }
+                {error.postValue(true) }
             )
     }
 }

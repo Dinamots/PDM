@@ -1,6 +1,10 @@
 package fr.m1miage.tmdb.utils
 
+import android.os.Build
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.*
 import fr.m1miage.tmdb.api.model.MovieResponse
@@ -23,6 +27,7 @@ const val DEFAULT_MOVIE_IMG_PATH =
 const val IMDB_PERSON_PATH = "https://www.imdb.com/name/"
 const val MAX_SPAN_COUNT = 3
 const val MIN_SPAN_COUNT = 1
+const val ERROR_OCCURED_MSG = "An error as occured, please retry"
 
 data class Favorites(
     var movies: MutableList<MovieResponse>
@@ -51,4 +56,12 @@ fun snack(view: View, msg: String, action: () -> Unit) {
         .make(view, msg, Snackbar.LENGTH_LONG)
         .setAction("RETRY") { action() }
     snackbar.show()
+}
+
+fun reload(manager: FragmentManager, fragment: Fragment) {
+    val ft: FragmentTransaction = manager.beginTransaction()
+    if (Build.VERSION.SDK_INT >= 26) {
+        ft.setReorderingAllowed(false)
+    }
+    ft.detach(fragment).attach(fragment).commit()
 }

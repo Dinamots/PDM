@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerSupportFragment
 import com.squareup.picasso.Picasso
+import fr.m1miage.tmdb.ConnectionManager
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.GenreAdapter
 import fr.m1miage.tmdb.adapter.BasicViewPagerAdapter
@@ -21,12 +22,11 @@ import fr.m1miage.tmdb.api.model.Video
 import fr.m1miage.tmdb.listeners.YoutubeOnInitializedListener
 import fr.m1miage.tmdb.ui.movie.cast.MovieDetailCastAndCrewFragment
 import fr.m1miage.tmdb.ui.movie.infos.MovieDetailInfosFragment
-import fr.m1miage.tmdb.utils.GOOFLE_API_KEY
-import fr.m1miage.tmdb.utils.MAX_SPAN_COUNT
-import fr.m1miage.tmdb.utils.MIN_SPAN_COUNT
-import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
+import fr.m1miage.tmdb.utils.*
 import jp.wasabeef.picasso.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.movie_detail_fragment.*
+import kotlinx.android.synthetic.main.movie_detail_fragment.movie_rating
+import kotlinx.android.synthetic.main.movie_element.*
 import java.text.SimpleDateFormat
 
 
@@ -37,6 +37,7 @@ class MovieDetailFragment() : Fragment() {
     lateinit var youtubePlayer: YouTubePlayer
     lateinit var videos: List<Video>
     lateinit var pagerAdapter: BasicViewPagerAdapter
+    var error = false
 
     companion object {
         fun newInstance() = MovieDetailFragment()
@@ -79,14 +80,16 @@ class MovieDetailFragment() : Fragment() {
         movie_genres.apply { setHasFixedSize(true); adapter = genreAdapter }
         initTabs()
         initYoutubePlayer()
-
+        movieDetailViewModel.onLoadingMovie
         movieDetailViewModel.movieId.observe(viewLifecycleOwner, Observer {
             movieDetailViewModel.fetchAll(it)
         })
 
 
         movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
-            initView(it)
+            if (it != null) {
+                initView(it)
+            }
         })
 
         movieDetailViewModel.videos.observe(viewLifecycleOwner, Observer {
@@ -96,6 +99,25 @@ class MovieDetailFragment() : Fragment() {
             }
         })
 
+        movieDetailViewModel.onLoadingMovie.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                loading_movie_header.visibility = View.VISIBLE
+                movie_detail_loader.visibility = View.VISIBLE
+                view_pager.visibility = View.GONE
+            } else {
+                loading_movie_header.visibility = View.GONE
+                movie_detail_loader.visibility = View.GONE
+                view_pager.visibility = View.VISIBLE
+            }
+        })
+
+        movieDetailViewModel.onErrorMovie.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                loading_movie_header.visibility = View.GONE
+                movie_detail_loader.visibility = View.GONE
+                movieDetailViewModel.onErrorMovie.postValue(false)
+            }
+        })
 
     }
 
@@ -160,6 +182,32 @@ class MovieDetailFragment() : Fragment() {
             .transform(BlurTransformation(context, 15, 1))
             .fit()
             .into(movie_backdrop)
+    }
+
+    override fun onDestroy() {
+
+        super.onDestroy()
+
+    }
+
+    override fun onStop() {
+        movieDetailViewModel.movie.postValue(null)
+        movie_title.text = ""
+        release.text = ""
+        movie_rating.rating = 0F
+        genreAdapter.genres = listOf()
+        genreAdapter.notifyDataSetChanged()
+        super.onStop()
+    }
+
+    override fun onDestroyView() {
+        movie_title.text = ""
+        release.text = ""
+        movie_rating.rating = 0F
+        genreAdapter.genres = listOf()
+        genreAdapter.notifyDataSetChanged()
+        super.onDestroyView()
+
     }
 
 }
