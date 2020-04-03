@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.*
@@ -23,6 +24,7 @@ import fr.m1miage.tmdb.utils.MOVIE_MAP_UPCOMING_KEY
 import fr.m1miage.tmdb.utils.extension.addMovieList
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import fr.m1miage.tmdb.utils.extension.getMovieMap
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {
@@ -42,11 +44,6 @@ class HomeFragment : Fragment() {
         initMovieLists()
         initLayoutManagers()
         return root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
     private fun initLayoutManagers() {
@@ -92,6 +89,8 @@ class HomeFragment : Fragment() {
         initMovieList(
             homeViewModel.nowPlayingMovies,
             homeViewModel.onErrorNowPlaying,
+            homeViewModel.onLoadNowPlaying,
+            root.loading_playing,
             adapterMap[root.now_playing_movies.id],
             MOVIE_MAP_PLAYING_KEY
         )
@@ -99,6 +98,8 @@ class HomeFragment : Fragment() {
         initMovieList(
             homeViewModel.popularMovies,
             homeViewModel.onErrorPopular,
+            homeViewModel.onLoadPopular,
+            root.loading_popular,
             adapterMap[root.popular_movies.id],
             MOVIE_MAP_POPULAR_KEY
         )
@@ -106,6 +107,8 @@ class HomeFragment : Fragment() {
         initMovieList(
             homeViewModel.topRatedMovies,
             homeViewModel.onErrorTopRated,
+            homeViewModel.onLoadTopRated,
+            root.loading_top_rated,
             adapterMap[root.top_rated_movies.id],
             MOVIE_MAP_TOP_KEY
         )
@@ -113,6 +116,8 @@ class HomeFragment : Fragment() {
         initMovieList(
             homeViewModel.upcomingMovies,
             homeViewModel.onErrorUpcoming,
+            homeViewModel.onLoadUpcoming,
+            root.loading_upcoming,
             adapterMap[root.upcoming_movies.id],
             MOVIE_MAP_UPCOMING_KEY
         )
@@ -121,20 +126,27 @@ class HomeFragment : Fragment() {
     private fun initMovieList(
         movies: LiveData<List<MovieResponse>>,
         error: MutableLiveData<Boolean>,
+        loading: MutableLiveData<Boolean>,
+        loader: RelativeLayout,
         movieAdapter: MovieAdapter?,
         key: String
     ) {
         movies.observe(viewLifecycleOwner, Observer {
-            preferences.addMovieList(it,key)
+            preferences.addMovieList(it, key)
             movieAdapter?.movies = it.toMutableList()
             movieAdapter?.notifyDataSetChanged()
         })
 
         error.observe(viewLifecycleOwner, Observer {
-            if(it) {
+            if (it) {
+                loading.postValue(false)
                 movieAdapter?.movies = preferences.getMovieMap()[key]?.toMutableList()!!
                 movieAdapter?.notifyDataSetChanged()
             }
+        })
+
+        loading.observe(viewLifecycleOwner, Observer {
+            loader.visibility = if (it) View.VISIBLE else View.GONE
         })
 
     }

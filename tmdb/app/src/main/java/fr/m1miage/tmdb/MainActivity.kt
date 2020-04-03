@@ -45,16 +45,6 @@ class MainActivity : AppCompatActivity() {
             val toolbar: Toolbar = findViewById(R.id.toolbar)
             setSupportActionBar(toolbar)
             val navController = findNavController(R.id.nav_host_fragment)
-            homeViewModel.onErrorUpcoming.observe(this, Observer {
-                if (it) {
-                    snack(
-                        this.findViewById(android.R.id.content)!!,
-                        getString(R.string.connection_needed)
-                    )
-                    homeViewModel.onErrorUpcoming.postValue(false)
-                }
-            })
-
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 currentNav = destination.id
             }
