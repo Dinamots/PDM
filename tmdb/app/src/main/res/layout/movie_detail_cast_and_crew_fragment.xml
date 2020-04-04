@@ -7,7 +7,9 @@
     tools:context=".ui.movie.cast.MovieDetailCastAndCrewFragment">
     <TextView
         android:id="@+id/cast_title"
-        android:text="CAST"
+        android:text="@string/cast"
+        android:textStyle="bold"
+        android:textAllCaps="true"
         android:layout_marginBottom="1dp"
         android:textSize="25sp"
         android:layout_width="wrap_content"
@@ -23,7 +25,9 @@
     <TextView
         android:layout_marginTop="10dp"
         android:layout_marginBottom="1dp"
-        android:text="CREW"
+        android:text="@string/crew"
+        android:textStyle="bold"
+        android:textAllCaps="true"
         android:textSize="25sp"
         android:id="@+id/crew_title"
         android:layout_width="wrap_content"

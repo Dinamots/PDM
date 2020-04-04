@@ -1,6 +1,5 @@
 package fr.m1miage.tmdb.ui.search.person
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,18 +12,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import fr.m1miage.tmdb.ConnectionManager
 
 import fr.m1miage.tmdb.R
-import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.adapter.PaginationListener
 import fr.m1miage.tmdb.adapter.PersonAdapter
-import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.ui.person.PersonViewModel
 import fr.m1miage.tmdb.ui.search.SearchViewModel
 import fr.m1miage.tmdb.utils.MAX_SPAN_COUNT
-import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
-import fr.m1miage.tmdb.utils.extension.getFavorites
 import fr.m1miage.tmdb.utils.extension.toPersons
 import fr.m1miage.tmdb.utils.snack
-import kotlinx.android.synthetic.main.search_movie_fragment.*
 import kotlinx.android.synthetic.main.search_person_fragment.*
 
 class SearchPersonFragment : Fragment() {
@@ -99,7 +93,7 @@ class SearchPersonFragment : Fragment() {
             if(ConnectionManager.isConnected.value == true) {
                 val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
                 navController.navigate(R.id.nav_person)
-                personViewModel.person.postValue(it)
+                personViewModel.personId.postValue(it.id)
             } else {
                 snack(view!!,getString(R.string.connection_needed))
             }

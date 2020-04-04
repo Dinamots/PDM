@@ -20,13 +20,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:icon="@drawable/ic_movie_black_24dp"
-            android:text="movie" />
+            android:text="@string/movie" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:icon="@drawable/ic_videocam_black_24dp"
-            android:text="Cast &amp; Crew" />
+            android:text="@string/cast_amp_crew" />
 
     </com.google.android.material.tabs.TabLayout>
 

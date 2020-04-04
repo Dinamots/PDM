@@ -1,6 +1,7 @@
 package fr.m1miage.tmdb
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
@@ -22,7 +23,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.ui.home.HomeViewModel
+import fr.m1miage.tmdb.ui.person.PersonViewModel
 import fr.m1miage.tmdb.ui.search.SearchViewModel
+import fr.m1miage.tmdb.utils.changeLanguage
+import fr.m1miage.tmdb.utils.extension.getLocale
 import fr.m1miage.tmdb.utils.snack
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -32,22 +36,34 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     val searchViewModel: SearchViewModel by viewModels()
     val homeViewModel: HomeViewModel by viewModels()
+    val personViewModel: PersonViewModel by viewModels()
+    var navigateUp: Boolean = false
     var currentNav: Int = 0
+    lateinit var preferences: SharedPreferences
+    lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        RetrofitManager.preferences = this.getPreferences(Context.MODE_PRIVATE)!!
         super.onCreate(savedInstanceState)
+        preferences = this.getPreferences(Context.MODE_PRIVATE)!!
+        changeLanguage(preferences.getLocale(), preferences, resources)
+        RetrofitManager.preferences = preferences
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build())
         setContentView(R.layout.splash)
         homeViewModel.fetchAll()
         Handler().postDelayed({
             setContentView(R.layout.activity_main)
-            val navController = findNavController(R.id.nav_host_fragment)
+            navController = findNavController(R.id.nav_host_fragment)
             val toolbar: Toolbar = findViewById(R.id.toolbar)
 
             initConnectivityManager()
             setSupportActionBar(toolbar)
             navController.addOnDestinationChangedListener { _, destination, _ ->
+                if (currentNav == R.id.nav_person && !navigateUp) {
+                    personViewModel.storeId()
+                    navigateUp = false
+                }
                 currentNav = destination.id
+
             }
             appBarConfiguration = AppBarConfiguration(getNavigationList(), drawer_layout)
             setupActionBarWithNavController(navController, appBarConfiguration)
@@ -71,7 +87,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onLanguages() {
         val bottomSheet = LanguagesBottomSheet(
-            this.getPreferences(Context.MODE_PRIVATE)!!,
+            preferences,
             resources
         ) {
             finish()
@@ -91,6 +107,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun networkCallback(
         navController: NavController,
@@ -159,14 +176,17 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun navigate(destinationId: Int) {
-        val navController = findNavController(R.id.nav_host_fragment)
         navController.navigate(destinationId)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
+        navigateUp = true
         if (ConnectionManager.isConnected.value == false) {
             navController.navigate(R.id.nav_home)
+        } else {
+            if (navController.currentDestination?.id == R.id.nav_person) {
+                personViewModel.personId.postValue(personViewModel.getId())
+            }
         }
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }

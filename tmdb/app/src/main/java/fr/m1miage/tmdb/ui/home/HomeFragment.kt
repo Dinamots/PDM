@@ -135,8 +135,12 @@ class HomeFragment : Fragment() {
         error.observe(viewLifecycleOwner, Observer {
             if (it) {
                 loading.postValue(false)
-                movieAdapter?.movies = preferences.getMovieMap()[key]?.toMutableList()!!
-                movieAdapter?.notifyDataSetChanged()
+                val mvs = preferences.getMovieMap()[key]?.toMutableList()
+                if (mvs != null) {
+                    movieAdapter?.movies = mvs
+                    movieAdapter?.notifyDataSetChanged()
+                }
+
             }
         })
 
@@ -152,13 +156,13 @@ class HomeFragment : Fragment() {
             headerString,
             preferences,
             {
-                if(ConnectionManager.isConnected.value == true) {
+                if (ConnectionManager.isConnected.value == true) {
                     val navController = findNavController(activity!!, R.id.nav_host_fragment)
                     val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
                     navController.navigate(R.id.nav_movie_detail)
                     movieDetailViewModel.movieId.postValue(it.id)
                 } else {
-                    snack(view!!,getString(R.string.connection_needed))
+                    snack(view!!, getString(R.string.connection_needed))
                 }
 
             }

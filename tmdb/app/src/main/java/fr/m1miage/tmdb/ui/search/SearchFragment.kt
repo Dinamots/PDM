@@ -45,8 +45,8 @@ class SearchFragment : Fragment() {
         search_tab_layout.setupWithViewPager(view_pager)
         view_pager.adapter = pagerAdapter
         search_tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_movie_black_24dp)
-        search_tab_layout.getTabAt(0)?.text = "Movie"
+        search_tab_layout.getTabAt(0)?.text = getString(R.string.movie)
         search_tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_videocam_black_24dp)
-        search_tab_layout.getTabAt(1)?.text = "Cast & Crew"
+        search_tab_layout.getTabAt(1)?.text = getString(R.string.cast_amp_crew)
     }
 }

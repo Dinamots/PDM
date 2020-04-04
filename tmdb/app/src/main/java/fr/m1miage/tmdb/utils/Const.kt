@@ -1,6 +1,10 @@
 package fr.m1miage.tmdb.utils
 
+import android.content.SharedPreferences
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Build
+import android.util.DisplayMetrics
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -9,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.*
 import fr.m1miage.tmdb.api.model.Movie
 import fr.m1miage.tmdb.api.model.MovieResponse
+import fr.m1miage.tmdb.utils.extension.setLocale
 import java.lang.reflect.Type
 import java.text.DateFormat
 import java.text.ParseException
@@ -65,4 +70,15 @@ fun reload(manager: FragmentManager, fragment: Fragment) {
         ft.setReorderingAllowed(false)
     }
     ft.detach(fragment).attach(fragment).commit()
+}
+
+fun changeLanguage(locale: Locale, pref: SharedPreferences, resources: Resources) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        pref.setLocale(locale)
+        val res: Resources = resources
+        val dm: DisplayMetrics = res.displayMetrics
+        val conf: Configuration = res.configuration
+        conf.setLocale(locale)
+        res.updateConfiguration(conf, dm)
+    }
 }

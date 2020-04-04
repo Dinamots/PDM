@@ -10,12 +10,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import fr.m1miage.tmdb.utils.changeLanguage
 import fr.m1miage.tmdb.utils.extension.setLocale
 import fr.m1miage.tmdb.utils.extension.getLocale
 import kotlinx.android.synthetic.main.language_bottom_sheet.view.*
 import java.util.*
 
-class LanguagesBottomSheet(val pref: SharedPreferences,val ressources: Resources, val onClick: () -> Unit) :
+class LanguagesBottomSheet(
+    val pref: SharedPreferences,
+    val ressources: Resources,
+    val onClick: () -> Unit
+) :
     BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,25 +34,14 @@ class LanguagesBottomSheet(val pref: SharedPreferences,val ressources: Resources
             else -> view.french_button.toggle()
         }
         view.french_button.setOnClickListener {
-            changeLanguage(Locale.FRANCE)
+            changeLanguage(Locale.FRANCE, pref, resources)
             onClick()
         }
         view.english_button.setOnClickListener {
-            changeLanguage(Locale.ENGLISH)
+            changeLanguage(Locale.ENGLISH, pref, ressources)
             onClick()
         }
         return view
-    }
-
-    private fun changeLanguage(locale: Locale) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            pref.setLocale(locale)
-            val res: Resources = resources
-            val dm: DisplayMetrics = res.displayMetrics
-            val conf: Configuration = res.configuration
-            conf.setLocale(locale)
-            res.updateConfiguration(conf, dm)
-        }
     }
 
 

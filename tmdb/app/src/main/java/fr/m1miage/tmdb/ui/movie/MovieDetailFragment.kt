@@ -123,9 +123,9 @@ class MovieDetailFragment : Fragment() {
         movie_detail_tab_layout.setupWithViewPager(view_pager)
         view_pager.adapter = pagerAdapter
         movie_detail_tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_movie_black_24dp)
-        movie_detail_tab_layout.getTabAt(0)?.text = "Movie"
+        movie_detail_tab_layout.getTabAt(0)?.text = getString(R.string.movie)
         movie_detail_tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_videocam_black_24dp)
-        movie_detail_tab_layout.getTabAt(1)?.text = "Cast & Crew"
+        movie_detail_tab_layout.getTabAt(1)?.text = getString(R.string.cast_amp_crew)
     }
 
     private fun initView(movie: Movie) {
@@ -184,6 +184,7 @@ class MovieDetailFragment : Fragment() {
     }
 
     override fun onStop() {
+        movieDetailViewModel.movie.postValue(null)
         movie_title.text = ""
         release.text = ""
         movie_rating.rating = 0F

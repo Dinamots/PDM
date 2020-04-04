@@ -17,7 +17,7 @@
         <item
             android:id="@+id/languages"
             android:icon="@drawable/ic_language_black_24dp"
-            android:title="Languages"
+            android:title="@string/languages"
             app:showAsAction="ifRoom" />
     </group>
 </menu>

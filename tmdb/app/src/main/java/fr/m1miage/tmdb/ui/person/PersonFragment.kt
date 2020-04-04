@@ -3,16 +3,16 @@ package fr.m1miage.tmdb.ui.person
 import android.content.Context
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import com.squareup.picasso.Picasso
-
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.api.model.Credits
@@ -24,6 +24,7 @@ import fr.m1miage.tmdb.utils.extension.getImgLink
 import fr.m1miage.tmdb.utils.extension.getMovieResponseList
 import fr.m1miage.tmdb.utils.formatDate
 import kotlinx.android.synthetic.main.person_fragment.*
+
 
 class PersonFragment : Fragment() {
     lateinit var movieAdapter: MovieAdapter
@@ -56,21 +57,21 @@ class PersonFragment : Fragment() {
             })
         { _, _ -> }
 
-        personViewModel.person.observe(viewLifecycleOwner, Observer {
+        personViewModel.personId.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                personViewModel.fecthPersonDetail(it.id)
-                personViewModel.fetchFilmography(it.id)
+                personViewModel.fecthPersonDetail(it)
+                personViewModel.fetchFilmography(it)
             }
         })
 
         personViewModel.personDetail.observe(viewLifecycleOwner, Observer {
-            if(it != null) {
+            if (it != null) {
                 initView(it)
             }
         })
 
         personViewModel.filmography.observe(viewLifecycleOwner, Observer {
-            if(it != null) {
+            if (it != null) {
                 initMovieList(it)
             }
         })
@@ -91,7 +92,7 @@ class PersonFragment : Fragment() {
         if (personDetail.birthday !== null) {
             birthDeathString =
                 "${formatDate(personDetail.birthday)} - ${if (personDetail.deathday != null)
-                    formatDate(personDetail.deathday) else "alive"}"
+                    formatDate(personDetail.deathday) else getString(R.string.alive)}"
 
         }
         val imdbLink = IMDB_PERSON_PATH + personDetail.imdb_id
@@ -99,8 +100,10 @@ class PersonFragment : Fragment() {
         person_name.text = personDetail.name
         person_birth_death.text = birthDeathString
         place_of_birth.text = personDetail.place_of_birth
-        imdb_link.text = imdbLink
         imdb_link.movementMethod = LinkMovementMethod.getInstance()
+        imdb_link.text =
+            HtmlCompat.fromHtml("<a href=\"$imdbLink\">${getString(R.string.tmdb_link)}</a>",HtmlCompat.FROM_HTML_MODE_LEGACY)
+
     }
 
     private fun initPersonImg(personDetail: PersonDetail) {
@@ -118,11 +121,9 @@ class PersonFragment : Fragment() {
         movieAdapter.notifyDataSetChanged()
     }
 
-    override fun onStop() {
-        /* personViewModel.person.postValue(null)
-        personViewModel.personDetail.postValue(null)
-        personViewModel.filmography.postValue(null) */
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
+
     }
 
 }

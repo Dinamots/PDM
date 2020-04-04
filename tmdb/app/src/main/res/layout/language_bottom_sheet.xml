@@ -7,8 +7,9 @@
         android:textColor="@color/colorPrimary"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:textAllCaps="true"
         android:layout_gravity="center"
-        android:text="AVAILABLE LANGUAGES"
+        android:text="@string/available_languages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -18,22 +19,17 @@
         android:layout_height="match_parent"
         >
 
-        <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
 
         <RadioButton
             android:id="@+id/french_button"
             android:layout_gravity="center"
-            android:text="FRENCH"
+            android:text="@string/french"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <RadioButton
             android:id="@+id/english_button"
             android:layout_gravity="center"
-            android:text="ENGLISH"
+            android:text="@string/english"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </RadioGroup>
