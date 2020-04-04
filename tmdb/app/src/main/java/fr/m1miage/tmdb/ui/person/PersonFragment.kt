@@ -134,6 +134,11 @@ class PersonFragment : Fragment() {
         movieAdapter.notifyDataSetChanged()
     }
 
+    override fun onDestroyView() {
+        person_header.visibility =  View.GONE
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         personViewModel.destroy()
         super.onDestroy()

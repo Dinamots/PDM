@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             initConnectivityManager()
             setSupportActionBar(toolbar)
             navController.addOnDestinationChangedListener { _, destination, _ ->
-                onDestinationChanged(destination)
+                onDestinationChanged(destination.id)
             }
             appBarConfiguration = AppBarConfiguration(getNavigationList(), drawer_layout)
             setupActionBarWithNavController(navController, appBarConfiguration)
@@ -186,17 +186,17 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    private fun onDestinationChanged(destination: NavDestination) {
+    private fun onDestinationChanged(destination: Int) {
         if (!navigateUp) {
             storingIdsOnStack(currentNav)
         }
 
         if (navigateUp) {
-            popIdsStacks(destination.id)
+            popIdsStacks(destination)
             navigateUp = false
         }
 
-        currentNav = destination.id
+        currentNav = destination
     }
 
 
@@ -212,5 +212,8 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_person -> personViewModel.storeId()
             R.id.nav_movie_detail -> movieDetailViewModel.storeId()
         }
+    }
+
+    override fun onBackPressed() {
     }
 }
