@@ -31,7 +31,6 @@ fun PersonResponse.toPerson(): Person {
 fun List<PersonResponse>.toPersons(): List<Person> {
     return this.fold(mutableListOf()) { acc, personResponse ->
         run {
-            println("PERSON = $personResponse")
             acc.add(personResponse.toPerson())
             acc
         }

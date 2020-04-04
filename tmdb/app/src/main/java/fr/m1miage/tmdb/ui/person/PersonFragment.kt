@@ -58,7 +58,6 @@ class PersonFragment : Fragment() {
 
         personViewModel.person.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                println(it)
                 personViewModel.fecthPersonDetail(it.id)
                 personViewModel.fetchFilmography(it.id)
             }

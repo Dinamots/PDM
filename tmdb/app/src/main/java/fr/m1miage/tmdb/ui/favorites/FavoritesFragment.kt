@@ -59,7 +59,6 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun onItemClick(movieResponse: MovieResponse) {
-        println(movieResponse.title)
     }
 
     private fun onFavoriteButtonClick(

@@ -19,10 +19,7 @@ import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.utils.*
-import fr.m1miage.tmdb.utils.extension.addMovieList
-import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
-import fr.m1miage.tmdb.utils.extension.getMovieMap
-import kotlinx.android.synthetic.main.fragment_home.*
+import fr.m1miage.tmdb.utils.extension.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {

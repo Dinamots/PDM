@@ -10,18 +10,17 @@ import android.os.StrictMode
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.ui.home.HomeViewModel
 import fr.m1miage.tmdb.ui.search.SearchViewModel
 import fr.m1miage.tmdb.utils.snack
@@ -35,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     val homeViewModel: HomeViewModel by viewModels()
     var currentNav: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
+        RetrofitManager.preferences = this.getPreferences(Context.MODE_PRIVATE)!!
         super.onCreate(savedInstanceState)
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build())
         setContentView(R.layout.splash)
@@ -49,15 +49,35 @@ class MainActivity : AppCompatActivity() {
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 currentNav = destination.id
             }
-            appBarConfiguration = AppBarConfiguration(
-                setOf(
-                    R.id.nav_home, R.id.nav_favorite, R.id.nav_search
-                ), drawer_layout
-            )
-
+            appBarConfiguration = AppBarConfiguration(getNavigationList(), drawer_layout)
             setupActionBarWithNavController(navController, appBarConfiguration)
             nav_view.setupWithNavController(navController)
+            nav_view.setNavigationItemSelectedListener { item -> onNavigationItemSelected(item) }
         }, 300L)
+    }
+
+    private fun getNavigationList() = setOf(R.id.nav_home, R.id.nav_favorite, R.id.nav_search)
+
+    private fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.languages -> onLanguages()
+            else -> {
+                navigate(item.itemId)
+                drawer_layout.closeDrawer(nav_view)
+            }
+        }
+        return true
+    }
+
+    private fun onLanguages() {
+        val bottomSheet = LanguagesBottomSheet(
+            this.getPreferences(Context.MODE_PRIVATE)!!,
+            resources
+        ) {
+            finish()
+            startActivity(intent)
+        }
+        bottomSheet.show(supportFragmentManager, "Languages")
     }
 
     private fun initConnectivityManager() {
@@ -66,24 +86,33 @@ class MainActivity : AppCompatActivity() {
         val connectivityManager =
             baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            connectivityManager.registerDefaultNetworkCallback(object :
-                ConnectivityManager.NetworkCallback() {
-                override fun onAvailable(network: Network) {
-                    homeViewModel.fetchAll()
-                    if (currentNav != 0) {
-                        val nav = currentNav
-                        runOnUiThread { navController.popBackStack();navController.navigate(nav) }
-                    }
-                    ConnectionManager.isConnected.postValue(true)
+            connectivityManager.registerDefaultNetworkCallback(
+                networkCallback(navController, self)
+            )
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun networkCallback(
+        navController: NavController,
+        self: MainActivity
+    ): ConnectivityManager.NetworkCallback {
+        return object :
+            ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                homeViewModel.fetchAll()
+                if (currentNav != 0) {
+                    val nav = currentNav
+                    runOnUiThread { navController.popBackStack();navController.navigate(nav) }
                 }
+                ConnectionManager.isConnected.postValue(true)
+            }
 
-                override fun onLost(network: Network?) {
-                    snack(self.findViewById(android.R.id.content)!!, "Internet connection lost")
-                    ConnectionManager.isConnected.postValue(false)
-                }
+            override fun onLost(network: Network?) {
+                snack(self.findViewById(android.R.id.content)!!, "Internet connection lost")
+                ConnectionManager.isConnected.postValue(false)
+            }
 
 
-            })
         }
     }
 
@@ -141,5 +170,4 @@ class MainActivity : AppCompatActivity() {
         }
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
-
 }

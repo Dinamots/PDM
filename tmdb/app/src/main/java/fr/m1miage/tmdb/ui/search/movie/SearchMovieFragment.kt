@@ -109,7 +109,6 @@ class SearchMovieFragment : Fragment() {
         )
         { movieResponse, _ ->
             preferences?.addOrRemoveMovie(movieResponse)
-            println(preferences?.getFavorites()?.movies)
         }
     }
 

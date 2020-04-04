@@ -3,11 +3,17 @@ package fr.m1miage.tmdb.utils.extension
 import android.content.SharedPreferences
 import com.google.gson.reflect.TypeToken
 import fr.m1miage.tmdb.api.model.MovieResponse
-import fr.m1miage.tmdb.utils.FAVORITES_SHARED_KEY
 import fr.m1miage.tmdb.utils.Favorites
-import fr.m1miage.tmdb.utils.MOVIE_MAP_SHARED_KEY
 import fr.m1miage.tmdb.utils.gson
+import java.util.*
 
+const val FAVORITES_SHARED_KEY = "FAVORITES"
+const val MOVIE_MAP_SHARED_KEY = "MOVIES"
+const val MOVIE_MAP_UPCOMING_KEY = "UPCOMING"
+const val MOVIE_MAP_TOP_KEY = "TOP"
+const val MOVIE_MAP_POPULAR_KEY = "POPULAR"
+const val MOVIE_MAP_PLAYING_KEY = "PLAYING"
+const val LOCALE_KEY = "LOCALE"
 
 fun SharedPreferences.getFavorites(): Favorites {
     return gson.fromJson(
@@ -29,12 +35,10 @@ fun SharedPreferences.addOrRemoveMovie(movie: MovieResponse) {
     val pref = this
     with(this.edit()) {
         favorites = pref.editFavorites(favorites, movie)
-        println(favorites)
         this?.putString(
             FAVORITES_SHARED_KEY,
             gson.toJson(favorites)
         )
-        println(favorites.movies)
         this?.apply()
     }
 }
@@ -69,4 +73,16 @@ fun SharedPreferences.addMovieList(movies: List<MovieResponse>, key: String) {
         this.putString(MOVIE_MAP_SHARED_KEY, gson.toJson(map))
         this?.apply()
     }
+}
+
+fun SharedPreferences.setLocale(locale: Locale) {
+    this.edit().putString(LOCALE_KEY, gson.toJson(locale)).apply()
+    println("locale = ${this.getLocale()}")
+}
+
+fun SharedPreferences.getLocale(): Locale {
+    return gson.fromJson(
+        this.getString(LOCALE_KEY, gson.toJson(Locale.getDefault())),
+        Locale::class.java
+    )
 }
