@@ -1,28 +1,14 @@
 package fr.m1miage.tmdb.ui.search
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.navigation.Navigation.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.BasicViewPagerAdapter
-import fr.m1miage.tmdb.adapter.MovieAdapter
-import fr.m1miage.tmdb.adapter.PaginationListener
-import fr.m1miage.tmdb.api.RetrofitManager
-import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
-import fr.m1miage.tmdb.ui.movie.cast.MovieDetailCastAndCrewFragment
-import fr.m1miage.tmdb.ui.movie.infos.MovieDetailInfosFragment
 import fr.m1miage.tmdb.ui.search.movie.SearchMovieFragment
 import fr.m1miage.tmdb.ui.search.person.SearchPersonFragment
-import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
-import fr.m1miage.tmdb.utils.extension.getFavorites
-import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.movie_detail_fragment.*
 import kotlinx.android.synthetic.main.search_fragment.*
 import kotlinx.android.synthetic.main.search_fragment.view_pager
 

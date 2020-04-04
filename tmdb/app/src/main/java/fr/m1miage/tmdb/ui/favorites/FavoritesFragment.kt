@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import fr.m1miage.tmdb.ConnectionManager
 import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
@@ -18,6 +19,7 @@ import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.utils.MAX_SPAN_COUNT
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import fr.m1miage.tmdb.utils.extension.getFavorites
+import fr.m1miage.tmdb.utils.snack
 import kotlinx.android.synthetic.main.fragment_favorites.view.*
 
 class FavoritesFragment : Fragment() {
@@ -40,10 +42,15 @@ class FavoritesFragment : Fragment() {
                 null,
                 sharedPreferences,
                 {
-                    val navController = findNavController(activity!!, R.id.nav_host_fragment)
-                    val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
-                    navController.navigate(R.id.nav_movie_detail)
-                    movieDetailViewModel.movieId.value = it.id
+                    if (ConnectionManager.isConnected.value == true) {
+                        val navController = findNavController(activity!!, R.id.nav_host_fragment)
+                        val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
+                        navController.navigate(R.id.nav_movie_detail)
+                        movieDetailViewModel.movieId.value = it.id
+                    } else {
+                        snack(view!!, getString(R.string.connection_needed))
+                    }
+
                 }
             ) { movieResponse, adapter ->
                 onFavoriteButtonClick(sharedPreferences, movieResponse, adapter)

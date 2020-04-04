@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
+import fr.m1miage.tmdb.ConnectionManager
 
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.MovieAdapter
@@ -22,6 +23,7 @@ import fr.m1miage.tmdb.utils.MAX_SPAN_COUNT
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import fr.m1miage.tmdb.utils.extension.getFavorites
 import fr.m1miage.tmdb.utils.extension.toPersons
+import fr.m1miage.tmdb.utils.snack
 import kotlinx.android.synthetic.main.search_movie_fragment.*
 import kotlinx.android.synthetic.main.search_person_fragment.*
 
@@ -94,9 +96,14 @@ class SearchPersonFragment : Fragment() {
         return PersonAdapter(
             mutableListOf()
         ) {
-            val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
-            navController.navigate(R.id.nav_person)
-            personViewModel.person.postValue(it)
+            if(ConnectionManager.isConnected.value == true) {
+                val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+                navController.navigate(R.id.nav_person)
+                personViewModel.person.postValue(it)
+            } else {
+                snack(view!!,getString(R.string.connection_needed))
+            }
+
         }
     }
 

@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
+import fr.m1miage.tmdb.ConnectionManager
 
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.MovieAdapter
@@ -19,6 +20,7 @@ import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.ui.search.SearchViewModel
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
 import fr.m1miage.tmdb.utils.extension.getFavorites
+import fr.m1miage.tmdb.utils.snack
 import kotlinx.android.synthetic.main.search_movie_fragment.*
 
 class SearchMovieFragment : Fragment() {
@@ -27,6 +29,7 @@ class SearchMovieFragment : Fragment() {
     var currentPage = 1
     var searchString = ""
     var newSearch = true
+
     companion object {
         fun newInstance() = SearchMovieFragment()
     }
@@ -71,7 +74,7 @@ class SearchMovieFragment : Fragment() {
         })
 
         searchViewModel.movies.observe(viewLifecycleOwner, Observer {
-            if(newSearch) {
+            if (newSearch) {
                 adapter.movies = it.toMutableList()
                 newSearch = false
             } else {
@@ -82,7 +85,8 @@ class SearchMovieFragment : Fragment() {
 
         searchViewModel.totalPages.observe(viewLifecycleOwner, Observer {
             totalPages = it
-        })    }
+        })
+    }
 
     private fun getAdapter(): MovieAdapter {
         val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
@@ -91,10 +95,16 @@ class SearchMovieFragment : Fragment() {
             null,
             preferences,
             {
-                val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
-                val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
-                navController.navigate(R.id.nav_movie_detail)
-                movieDetailViewModel.movieId.value = it.id
+                if (ConnectionManager.isConnected.value == true) {
+                    val navController =
+                        Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+                    val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
+                    navController.navigate(R.id.nav_movie_detail)
+                    movieDetailViewModel.movieId.value = it.id
+                } else {
+                    snack(view!!, getString(R.string.connection_needed))
+                }
+
             }
         )
         { movieResponse, _ ->

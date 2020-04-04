@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.*
+import fr.m1miage.tmdb.api.model.Movie
 import fr.m1miage.tmdb.api.model.MovieResponse
 import java.lang.reflect.Type
 import java.text.DateFormat

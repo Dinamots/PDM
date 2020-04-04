@@ -41,10 +41,11 @@ class MainActivity : AppCompatActivity() {
         homeViewModel.fetchAll()
         Handler().postDelayed({
             setContentView(R.layout.activity_main)
-            initConnectivityManager()
-            val toolbar: Toolbar = findViewById(R.id.toolbar)
-            setSupportActionBar(toolbar)
             val navController = findNavController(R.id.nav_host_fragment)
+            val toolbar: Toolbar = findViewById(R.id.toolbar)
+
+            initConnectivityManager()
+            setSupportActionBar(toolbar)
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 currentNav = destination.id
             }
@@ -134,8 +135,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-
         val navController = findNavController(R.id.nav_host_fragment)
+        if (ConnectionManager.isConnected.value == false) {
+            navController.navigate(R.id.nav_home)
+        }
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
