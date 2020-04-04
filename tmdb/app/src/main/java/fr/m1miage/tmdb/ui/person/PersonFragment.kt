@@ -76,6 +76,16 @@ class PersonFragment : Fragment() {
             }
         })
 
+        personViewModel.onLoadingPersonDetail.observe(viewLifecycleOwner, Observer {
+            loading_movie_img.visibility = if (it) View.VISIBLE else View.GONE
+            person_header.visibility = if(it) View.GONE else View.VISIBLE
+        })
+
+        personViewModel.onLoadingFilmography.observe(viewLifecycleOwner, Observer {
+            loading_filmography.visibility = if(it) View.VISIBLE else View.GONE
+            person_filmography.visibility = if(it) View.GONE else View.VISIBLE
+        })
+
 
     }
 
@@ -102,7 +112,10 @@ class PersonFragment : Fragment() {
         place_of_birth.text = personDetail.place_of_birth
         imdb_link.movementMethod = LinkMovementMethod.getInstance()
         imdb_link.text =
-            HtmlCompat.fromHtml("<a href=\"$imdbLink\">${getString(R.string.tmdb_link)}</a>",HtmlCompat.FROM_HTML_MODE_LEGACY)
+            HtmlCompat.fromHtml(
+                "<a href=\"$imdbLink\">${getString(R.string.tmdb_link)}</a>",
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
 
     }
 
@@ -122,6 +135,7 @@ class PersonFragment : Fragment() {
     }
 
     override fun onDestroy() {
+        personViewModel.destroy()
         super.onDestroy()
 
     }

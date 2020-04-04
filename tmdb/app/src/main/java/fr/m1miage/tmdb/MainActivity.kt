@@ -16,6 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -23,6 +24,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.ui.home.HomeViewModel
+import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.ui.person.PersonViewModel
 import fr.m1miage.tmdb.ui.search.SearchViewModel
 import fr.m1miage.tmdb.utils.changeLanguage
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     val searchViewModel: SearchViewModel by viewModels()
     val homeViewModel: HomeViewModel by viewModels()
+    val movieDetailViewModel: MovieDetailViewModel by viewModels()
     val personViewModel: PersonViewModel by viewModels()
     var navigateUp: Boolean = false
     var currentNav: Int = 0
@@ -58,12 +61,7 @@ class MainActivity : AppCompatActivity() {
             initConnectivityManager()
             setSupportActionBar(toolbar)
             navController.addOnDestinationChangedListener { _, destination, _ ->
-                if (currentNav == R.id.nav_person && !navigateUp) {
-                    personViewModel.storeId()
-                    navigateUp = false
-                }
-                currentNav = destination.id
-
+                onDestinationChanged(destination)
             }
             appBarConfiguration = AppBarConfiguration(getNavigationList(), drawer_layout)
             setupActionBarWithNavController(navController, appBarConfiguration)
@@ -183,11 +181,36 @@ class MainActivity : AppCompatActivity() {
         navigateUp = true
         if (ConnectionManager.isConnected.value == false) {
             navController.navigate(R.id.nav_home)
-        } else {
-            if (navController.currentDestination?.id == R.id.nav_person) {
-                personViewModel.personId.postValue(personViewModel.getId())
-            }
+            return super.onSupportNavigateUp()
         }
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    private fun onDestinationChanged(destination: NavDestination) {
+        if (!navigateUp) {
+            storingIdsOnStack(currentNav)
+        }
+
+        if (navigateUp) {
+            popIdsStacks(destination.id)
+            navigateUp = false
+        }
+
+        currentNav = destination.id
+    }
+
+
+    private fun popIdsStacks(destinationId: Int) {
+        when (destinationId) {
+            R.id.nav_person -> personViewModel.personId.postValue(personViewModel.getId())
+            R.id.nav_movie_detail -> movieDetailViewModel.movieId.postValue(movieDetailViewModel.getId())
+        }
+    }
+
+    private fun storingIdsOnStack(destinationId: Int) {
+        when (destinationId) {
+            R.id.nav_person -> personViewModel.storeId()
+            R.id.nav_movie_detail -> movieDetailViewModel.storeId()
+        }
     }
 }

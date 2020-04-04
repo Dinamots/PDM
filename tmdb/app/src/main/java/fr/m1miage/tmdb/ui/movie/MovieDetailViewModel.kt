@@ -9,6 +9,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 
 class MovieDetailViewModel : FetchViewModel() {
     val movieId = MutableLiveData<Int>()
+    val movieIds = mutableListOf<Int>()
+
     var movie = MutableLiveData<Movie>()
     var videos = MutableLiveData<List<Video>>()
     val onLoadingMovie = MutableLiveData<Boolean>()
@@ -38,6 +40,20 @@ class MovieDetailViewModel : FetchViewModel() {
     fun fetchAll(id: Int) {
         fetchVideos(id)
         fetchMovie(id)
+    }
+
+    fun getId(): Int? {
+        val item = movieIds.lastOrNull()
+        if (movieIds.isNotEmpty()) {
+            movieIds.removeAt(movieIds.size - 1)
+        }
+        return item
+    }
+
+    fun storeId() {
+        if(movieId.value != null) {
+            movieIds.add(movieId.value!!)
+        }
     }
 
 

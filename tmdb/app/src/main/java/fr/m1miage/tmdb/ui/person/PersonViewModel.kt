@@ -49,9 +49,16 @@ class PersonViewModel : FetchViewModel() {
     }
 
     fun storeId() {
-        if(personId.value != null) {
+        if (personId.value != null) {
             personIds.add(personId.value!!)
         }
+    }
+
+    fun destroy() {
+        personId.postValue(null)
+        personDetail.postValue(null)
+        filmography.postValue(null)
+
     }
 
 }

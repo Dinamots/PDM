@@ -79,7 +79,9 @@ class MovieDetailFragment : Fragment() {
         initYoutubePlayer()
         movieDetailViewModel.onLoadingMovie
         movieDetailViewModel.movieId.observe(viewLifecycleOwner, Observer {
-            movieDetailViewModel.fetchAll(it)
+            if (it != null) {
+                movieDetailViewModel.fetchAll(it)
+            }
         })
 
 
