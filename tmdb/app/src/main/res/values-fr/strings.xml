@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">tmdb</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="menu_home">Film</string>
+    <string name="upcoming_movies">Prochainement</string>
+    <string name="now_playing_movies">En salle</string>
+    <string name="top_rated_movies">Mieux notés</string>
+    <string name="popular_movies">Populaires</string>
+    <string name="menu_gallery">TV</string>
+    <string name="menu_slideshow">Favoris</string>
+    <string name="menu_movie_detail">Détail du film</string>
+    <string name="share">Partager</string>
+    <string name="trailer">Bande d\'annonce</string>
+    <string name="favorite">Favoris</string>
+    <string name="error_occured">Une erreur est survenue, réessayez .</string>
+    <string name="connection_needed">Vous devez être connecté à internet, réessayez.</string>
+    <string name="languages">Langages</string>
+    <string name="navigation_drawer_open">Ouvrir la navigation</string>
+    <string name="navigation_drawer_close" translatable="false">Fermer la navigation</string>
+    <string name="add_to_favorites">Favoris</string>
+    <string name="app_label">Recherche</string>
+    <string name="search_hint">Rechercher un film</string>
+    <string name="search_title">Recherche</string>
+    <string name="available_languages">langages disponibles</string>
+    <string name="cast">Acteurs</string>
+    <string name="crew">Equipe technique</string>
+    <string name="movie">Film</string>
+    <string name="cast_amp_crew"><![CDATA[Acteurs & Equipe]]></string>
+    <string name="filmography">Filmographie</string>
+    <string name="tmdb_link">Page personnel TMDB</string>
+    <string name="french">Français</string>
+    <string name="english">Anglais</string>
+    <string name="alive">Aujourd\'hui</string>
+    <string name="spanish">Espagnol</string>
+    <string name="no_results">Pas de résultats</string>
+    <string name="connection_lost">Connection internet perdu</string>
+    <string name="added_to_favorite">Ajouté aux favoris</string>
+
+</resources>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_person"
+        android:name="fr.m1miage.tmdb.ui.person.PersonFragment"
+        android:label=""
+        tools:layout="@layout/person_fragment">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="fr.m1miage.tmdb.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_movie_detail"
+        android:name="fr.m1miage.tmdb.ui.movie.MovieDetailFragment"
+        android:label="@string/menu_movie_detail"
+        tools:layout="@layout/movie_detail_fragment">
+
+        <action
+            android:id="@+id/action_movie_detail_nav_home"
+            app:destination="@id/nav_home"
+            app:popUpTo="@id/nav_home" />
+    </fragment>
+
+    <!-- <fragment
+        android:id="@+id/nav_gallery"
+        android:name="fr.m1miage.tmdb.ui.gallery.GalleryFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/fragment_gallery" /> -->
+
+    <fragment
+        android:id="@+id/nav_search"
+        android:name="fr.m1miage.tmdb.ui.search.SearchFragment"
+        android:label="@string/search_title"
+        tools:layout="@layout/search_fragment" />
+
+    <fragment
+        android:id="@+id/nav_no_internet"
+        android:name="fr.m1miage.tmdb.ui.internet.NoInternetFragment"
+        android:label="@string/search_title"
+        tools:layout="@layout/no_internet_fragment" />
+
+    <fragment
+        android:id="@+id/nav_favorite"
+        android:name="fr.m1miage.tmdb.ui.favorites.FavoritesFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_favorites" />
+
+</navigation>
