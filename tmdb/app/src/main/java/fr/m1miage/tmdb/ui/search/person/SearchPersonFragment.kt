@@ -14,12 +14,16 @@ import fr.m1miage.tmdb.ConnectionManager
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.PaginationListener
 import fr.m1miage.tmdb.adapter.PersonAdapter
+import fr.m1miage.tmdb.api.model.MovieResponse
+import fr.m1miage.tmdb.api.model.Person
+import fr.m1miage.tmdb.api.model.PersonResponse
 import fr.m1miage.tmdb.ui.person.PersonViewModel
 import fr.m1miage.tmdb.ui.search.SearchViewModel
 import fr.m1miage.tmdb.utils.MAX_SPAN_COUNT
 import fr.m1miage.tmdb.utils.extension.toPersons
 import fr.m1miage.tmdb.utils.snack
 import kotlinx.android.synthetic.main.search_person_fragment.*
+import kotlinx.android.synthetic.main.search_person_fragment.no_results
 
 class SearchPersonFragment : Fragment() {
     val searchViewModel: SearchViewModel by activityViewModels()
@@ -62,6 +66,7 @@ class SearchPersonFragment : Fragment() {
         searchPersonViewModel.persons.observe(viewLifecycleOwner, Observer {
             if(newSearch) {
                 adapter.persons = it.toPersons().toMutableList()
+                onNoResults(it)
                 newSearch = false
             } else {
                 adapter.persons.addAll(it.toPersons().toMutableList())
@@ -98,6 +103,16 @@ class SearchPersonFragment : Fragment() {
                 snack(view!!,getString(R.string.connection_needed))
             }
 
+        }
+    }
+
+    private fun onNoResults(persons: List<PersonResponse>) {
+        if (persons.isEmpty()) {
+            no_results.visibility = View.VISIBLE
+            search_person_recycler_view.visibility = View.GONE
+        } else {
+            no_results.visibility = View.GONE
+            search_person_recycler_view.visibility = View.VISIBLE
         }
     }
 

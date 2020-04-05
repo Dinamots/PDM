@@ -32,6 +32,13 @@
             android:text="@string/english"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <RadioButton
+            android:id="@+id/spanish_button"
+            android:layout_gravity="center"
+            android:text="@string/spanish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
     </RadioGroup>
 
 </LinearLayout>

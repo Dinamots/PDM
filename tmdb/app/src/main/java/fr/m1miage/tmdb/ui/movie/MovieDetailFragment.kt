@@ -135,7 +135,7 @@ class MovieDetailFragment : Fragment() {
         initText(movie)
         initGenres(movie)
         initTrailerButton()
-        movie_rating.rating = (movie.vote_average / 2).toFloat()
+        movie_rating.rating = (movie.vote_average?.div(2))?.toFloat() ?: 0F
 
 
     }
@@ -156,15 +156,19 @@ class MovieDetailFragment : Fragment() {
     }
 
     private fun initText(movie: Movie) {
-        movie_title.text = movie.title
-        release.text = SimpleDateFormat("dd-MM-yyyy").format(movie.release_date)
+        movie_title.text = movie.title ?: ""
+        release.text =
+            if (movie.release_date != null) SimpleDateFormat("dd-MM-yyyy").format(movie.release_date) else ""
     }
 
 
     private fun initGenres(movie: Movie) {
         movie_genres.layoutManager =
-            GridLayoutManager(context, getSpanCount(movie.genres.size))
-        genreAdapter.genres = movie.genres
+            GridLayoutManager(
+                context,
+                if (movie.genres != null) getSpanCount(movie.genres.size) else 0
+            )
+        genreAdapter.genres = movie.genres ?: listOf()
         genreAdapter.notifyDataSetChanged()
     }
 

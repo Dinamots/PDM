@@ -18,7 +18,7 @@
     <string name="languages">Langages</string>
     <string name="navigation_drawer_open">Ouvrir la navigation</string>
     <string name="navigation_drawer_close" translatable="false">Fermer la navigation</string>
-    <string name="add_to_favorites">Favories</string>
+    <string name="add_to_favorites">Favoris</string>
     <string name="app_label">Recherche</string>
     <string name="search_hint">Recherche un film</string>
     <string name="search_title">Recherche</string>
@@ -32,5 +32,7 @@
     <string name="french">Français</string>
     <string name="english">Anglais</string>
     <string name="alive">Aujourd\'hui</string>
+    <string name="spanish">Espagnol</string>
+    <string name="no_results">Pas de résultats</string>
 
 </resources>

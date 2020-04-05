@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.StrictMode
+import android.provider.SearchRecentSuggestions
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
@@ -16,7 +17,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -144,10 +144,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setQueryListenerOnSearchView(searchView: SearchView) {
+        val self = this
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                searchViewModel.searchSting.value = query
-                return false
+                searchViewModel.searchSting.postValue(query)
+                return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {

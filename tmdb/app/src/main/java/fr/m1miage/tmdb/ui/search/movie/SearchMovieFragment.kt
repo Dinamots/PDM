@@ -1,7 +1,6 @@
 package fr.m1miage.tmdb.ui.search.movie
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,10 +15,10 @@ import fr.m1miage.tmdb.ConnectionManager
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.adapter.PaginationListener
+import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.ui.search.SearchViewModel
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
-import fr.m1miage.tmdb.utils.extension.getFavorites
 import fr.m1miage.tmdb.utils.snack
 import kotlinx.android.synthetic.main.search_movie_fragment.*
 
@@ -76,6 +75,7 @@ class SearchMovieFragment : Fragment() {
         searchViewModel.movies.observe(viewLifecycleOwner, Observer {
             if (newSearch) {
                 adapter.movies = it.toMutableList()
+                onNoResults(it)
                 newSearch = false
             } else {
                 adapter.movies.addAll(it)
@@ -86,6 +86,16 @@ class SearchMovieFragment : Fragment() {
         searchViewModel.totalPages.observe(viewLifecycleOwner, Observer {
             totalPages = it
         })
+    }
+
+    private fun onNoResults(movies: List<MovieResponse>) {
+        if (movies.isEmpty()) {
+            no_results.visibility = View.VISIBLE
+            search_movie_recycler_view.visibility = View.GONE
+        } else {
+            no_results.visibility = View.GONE
+            search_movie_recycler_view.visibility = View.VISIBLE
+        }
     }
 
     private fun getAdapter(): MovieAdapter {

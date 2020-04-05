@@ -37,13 +37,14 @@ class RetrofitManager {
 
 
         private fun getUpdatedChain(chain: Interceptor.Chain): Response {
-            val originalRequest: Request = chain.request();
-            val originalHttpUrl: HttpUrl = originalRequest.url;
+            val originalRequest: Request = chain.request()
+            val originalHttpUrl: HttpUrl = originalRequest.url
             val url: HttpUrl = originalHttpUrl
                 .newBuilder()
                 .addQueryParameter("api_key", API_KEY)
                 .addQueryParameter("language", preferences.getLocale().toString())
                 .build()
+            println("URL = $url")
             val requestBuilder: Request.Builder = originalRequest.newBuilder().url(url)
             val newRequest: Request = requestBuilder.build()
             return chain.proceed(newRequest)

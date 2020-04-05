@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import fr.m1miage.tmdb.utils.changeLanguage
+import fr.m1miage.tmdb.utils.extension.*
 import fr.m1miage.tmdb.utils.extension.setLocale
 import fr.m1miage.tmdb.utils.extension.getLocale
 import kotlinx.android.synthetic.main.language_bottom_sheet.view.*
@@ -31,6 +32,7 @@ class LanguagesBottomSheet(
         val view = inflater.inflate(R.layout.language_bottom_sheet, container, false)
         when (pref.getLocale()) {
             Locale.ENGLISH -> view.english_button.toggle()
+            Locale("es") -> view.spanish_button.toggle()
             else -> view.french_button.toggle()
         }
         view.french_button.setOnClickListener {
@@ -39,6 +41,10 @@ class LanguagesBottomSheet(
         }
         view.english_button.setOnClickListener {
             changeLanguage(Locale.ENGLISH, pref, ressources)
+            onClick()
+        }
+        view.spanish_button.setOnClickListener {
+            changeLanguage(Locale("es"),pref,resources)
             onClick()
         }
         return view

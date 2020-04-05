@@ -5,11 +5,20 @@
     android:layout_height="match_parent"
     tools:context=".ui.search.movie.SearchMovieFragment">
 
+    <TextView
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:id="@+id/no_results"
+        android:text="@string/no_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_movie_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"/>
 
-    </androidx.recyclerview.widget.RecyclerView>
+
 
 </FrameLayout>
