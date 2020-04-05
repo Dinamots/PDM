@@ -16,7 +16,7 @@ fun PersonDetail.getImgLink() =
 fun PersonResponse.toPerson(): Person {
     return Person(
         id = this.id!!,
-        name = this.name!!,
+        name = this.name,
         profile_path = this.profile_path,
         job = null,
         cast_id = null,

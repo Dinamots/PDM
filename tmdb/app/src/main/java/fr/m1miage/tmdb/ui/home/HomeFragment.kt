@@ -126,28 +126,41 @@ class HomeFragment : Fragment() {
         movieAdapter: MovieAdapter?,
         key: String
     ) {
-        movies.observe(viewLifecycleOwner, Observer {
-            preferences.addMovieList(it, key)
-            movieAdapter?.movies = it.toMutableList()
-            movieAdapter?.notifyDataSetChanged()
-        })
+        movies.observe(viewLifecycleOwner, Observer { onSuccess(it, key, movieAdapter) })
+        error.observe(viewLifecycleOwner, Observer { onError(it, loading, key, movieAdapter) })
+        loading.observe(viewLifecycleOwner, Observer { onLoading(loader, it) })
 
-        error.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                loading.postValue(false)
-                val mvs = preferences.getMovieMap()[key]?.toMutableList()
-                if (mvs != null) {
-                    movieAdapter?.movies = mvs
-                    movieAdapter?.notifyDataSetChanged()
-                }
+    }
 
+    private fun onLoading(loader: RelativeLayout, it: Boolean) {
+        loader.visibility = if (it) View.VISIBLE else View.GONE
+    }
+
+    private fun onSuccess(
+        it: List<MovieResponse>,
+        key: String,
+        movieAdapter: MovieAdapter?
+    ) {
+        preferences.addMovieList(it, key)
+        movieAdapter?.movies = it.toMutableList()
+        movieAdapter?.notifyDataSetChanged()
+    }
+
+    private fun onError(
+        it: Boolean,
+        loading: MutableLiveData<Boolean>,
+        key: String,
+        movieAdapter: MovieAdapter?
+    ) {
+        if (it) {
+            loading.postValue(false)
+            val mvs = preferences.getMovieMap()[key]?.toMutableList()
+            if (mvs != null) {
+                movieAdapter?.movies = mvs
+                movieAdapter?.notifyDataSetChanged()
             }
-        })
 
-        loading.observe(viewLifecycleOwner, Observer {
-            loader.visibility = if (it) View.VISIBLE else View.GONE
-        })
-
+        }
     }
 
     private fun getAdapter(headerString: String): MovieAdapter {

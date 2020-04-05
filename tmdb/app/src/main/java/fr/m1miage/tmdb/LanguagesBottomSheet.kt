@@ -1,18 +1,13 @@
 package fr.m1miage.tmdb
 
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.content.res.Resources
-import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import fr.m1miage.tmdb.utils.changeLanguage
-import fr.m1miage.tmdb.utils.extension.*
-import fr.m1miage.tmdb.utils.extension.setLocale
 import fr.m1miage.tmdb.utils.extension.getLocale
 import kotlinx.android.synthetic.main.language_bottom_sheet.view.*
 import java.util.*
@@ -35,19 +30,19 @@ class LanguagesBottomSheet(
             Locale("es") -> view.spanish_button.toggle()
             else -> view.french_button.toggle()
         }
-        view.french_button.setOnClickListener {
-            changeLanguage(Locale.FRANCE, pref, resources)
-            onClick()
-        }
-        view.english_button.setOnClickListener {
-            changeLanguage(Locale.ENGLISH, pref, ressources)
-            onClick()
-        }
-        view.spanish_button.setOnClickListener {
-            changeLanguage(Locale("es"),pref,resources)
-            onClick()
-        }
+
+        view.french_button.setOnClickListener { onButtonClick(Locale.FRANCE) }
+
+        view.english_button.setOnClickListener { onButtonClick(Locale.ENGLISH) }
+
+        view.spanish_button.setOnClickListener { onButtonClick(Locale("es")) }
+
         return view
+    }
+
+    private fun onButtonClick(locale: Locale) {
+        changeLanguage(locale, pref, resources)
+        onClick()
     }
 
 

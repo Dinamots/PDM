@@ -49,12 +49,7 @@ class SearchMovieFragment : Fragment() {
         val layout = GridLayoutManager(context, 3)
         search_movie_recycler_view.adapter = adapter
         search_movie_recycler_view.layoutManager = layout
-        searchViewModel.searchSting.observe(viewLifecycleOwner, Observer {
-            newSearch = true
-            searchString = it
-            currentPage = 1
-            searchViewModel.fetchMovies(searchString, currentPage)
-        })
+        searchViewModel.searchSting.observe(viewLifecycleOwner, Observer { onSearch(it) })
 
         search_movie_recycler_view.addOnScrollListener(object : PaginationListener(layout) {
             override fun loadMoreItems() {
@@ -73,19 +68,33 @@ class SearchMovieFragment : Fragment() {
         })
 
         searchViewModel.movies.observe(viewLifecycleOwner, Observer {
-            if (newSearch) {
-                adapter.movies = it.toMutableList()
-                onNoResults(it)
-                newSearch = false
-            } else {
-                adapter.movies.addAll(it)
-            }
-            adapter.notifyDataSetChanged()
+            onSuccessMovies(adapter, it)
         })
 
         searchViewModel.totalPages.observe(viewLifecycleOwner, Observer {
             totalPages = it
         })
+    }
+
+    private fun onSearch(it: String) {
+        newSearch = true
+        searchString = it
+        currentPage = 1
+        searchViewModel.fetchMovies(searchString, currentPage)
+    }
+
+    private fun onSuccessMovies(
+        adapter: MovieAdapter,
+        it: List<MovieResponse>
+    ) {
+        if (newSearch) {
+            adapter.movies = it.toMutableList()
+            onNoResults(it)
+            newSearch = false
+        } else {
+            adapter.movies.addAll(it)
+        }
+        adapter.notifyDataSetChanged()
     }
 
     private fun onNoResults(movies: List<MovieResponse>) {
@@ -104,21 +113,19 @@ class SearchMovieFragment : Fragment() {
             mutableListOf(),
             null,
             preferences,
-            {
-                if (ConnectionManager.isConnected.value == true) {
-                    val navController =
-                        Navigation.findNavController(activity!!, R.id.nav_host_fragment)
-                    val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
-                    navController.navigate(R.id.nav_movie_detail)
-                    movieDetailViewModel.movieId.value = it.id
-                } else {
-                    snack(view!!, getString(R.string.connection_needed))
-                }
+            { onClickMovie(it) }
+        ) { movieResponse, _ -> preferences?.addOrRemoveMovie(movieResponse) }
+    }
 
-            }
-        )
-        { movieResponse, _ ->
-            preferences?.addOrRemoveMovie(movieResponse)
+    private fun onClickMovie(it: MovieResponse) {
+        if (ConnectionManager.isConnected.value == true) {
+            val navController =
+                Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+            val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
+            navController.navigate(R.id.nav_movie_detail)
+            movieDetailViewModel.movieId.value = it.id
+        } else {
+            snack(view!!, getString(R.string.connection_needed))
         }
     }
 

@@ -2,16 +2,16 @@
 <resources>
     <string name="app_name">tmdb</string>
     <string name="navigation_drawer_open">Abrir la navigación</string>
-    <string name="navigation_drawer_close">serrar la navigación</string>
-    <string name="action_settings">configuraciones</string>
-    <string name="menu_home">Pelicula</string>
+    <string name="navigation_drawer_close">Cerrar la navigación</string>
+    <string name="action_settings">Configuraciones</string>
+    <string name="menu_home">Película</string>
     <string name="menu_slideshow">Favoritos</string>
     <string name="upcoming_movies">"Próximamente "</string>
-    <string name="top_rated_movies">Mejor valorados</string>
+    <string name="top_rated_movies">Mejor calificados</string>
     <string name="popular_movies">Popular</string>
     <string name="add_to_favorites">Favoritos</string>
     <string name="app_label">Búsqueda</string>
-    <string name="search_hint">Encuentra una pelicula</string>
+    <string name="search_hint">Buscar una película</string>
     <string name="search_title">Búsqueda</string>
     <string name="menu_movie_detail">Detalle de la película</string>
     <string name="share">Compartir</string>
@@ -23,14 +23,16 @@
     <string name="available_languages">Idiomas disponibles</string>
     <string name="cast">Actores</string>
     <string name="crew">Equipo tecnico</string>
-    <string name="movie">Pelicula</string>
+    <string name="movie">Película</string>
     <string name="cast_amp_crew"><![CDATA[Actores & Equipo]]></string>
     <string name="filmography">Filmografía</string>
     <string name="tmdb_link">Página personal TMDB</string>
     <string name="french">Francés</string>
-    <string name="english">Ingles</string>
+    <string name="english">Inglés</string>
     <string name="alive">Hoy</string>
     <string name="spanish">Español</string>
     <string name="now_playing_movies">" En el cine"</string>
     <string name="no_results">"No resultados "</string>
+    <string name="connection_lost">Conexión a internet perdida</string>
+    <string name="added_to_favorite">Agregado a favoritos</string>
 </resources>

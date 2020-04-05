@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.StrictMode
-import android.provider.SearchRecentSuggestions
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
@@ -53,21 +52,23 @@ class MainActivity : AppCompatActivity() {
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build())
         setContentView(R.layout.splash)
         homeViewModel.fetchAll()
-        Handler().postDelayed({
-            setContentView(R.layout.activity_main)
-            navController = findNavController(R.id.nav_host_fragment)
-            val toolbar: Toolbar = findViewById(R.id.toolbar)
+        Handler().postDelayed({ main() }, 300L)
+    }
 
-            initConnectivityManager()
-            setSupportActionBar(toolbar)
-            navController.addOnDestinationChangedListener { _, destination, _ ->
-                onDestinationChanged(destination.id)
-            }
-            appBarConfiguration = AppBarConfiguration(getNavigationList(), drawer_layout)
-            setupActionBarWithNavController(navController, appBarConfiguration)
-            nav_view.setupWithNavController(navController)
-            nav_view.setNavigationItemSelectedListener { item -> onNavigationItemSelected(item) }
-        }, 300L)
+    private fun main() {
+        setContentView(R.layout.activity_main)
+        navController = findNavController(R.id.nav_host_fragment)
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+
+        initConnectivityManager()
+        setSupportActionBar(toolbar)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            onDestinationChanged(destination.id)
+        }
+        appBarConfiguration = AppBarConfiguration(getNavigationList(), drawer_layout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        nav_view.setupWithNavController(navController)
+        nav_view.setNavigationItemSelectedListener { item -> onNavigationItemSelected(item) }
     }
 
     private fun getNavigationList() = setOf(R.id.nav_home, R.id.nav_favorite, R.id.nav_search)
@@ -123,7 +124,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onLost(network: Network?) {
-                snack(self.findViewById(android.R.id.content)!!, "Internet connection lost")
+                snack(
+                    self.findViewById(android.R.id.content)!!,
+                    getString(R.string.connection_lost)
+                )
                 ConnectionManager.isConnected.postValue(false)
             }
 
@@ -182,7 +186,7 @@ class MainActivity : AppCompatActivity() {
         navigateUp = true
         if (ConnectionManager.isConnected.value == false) {
             navController.navigate(R.id.nav_home)
-            return super.onSupportNavigateUp()
+            return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
         }
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }

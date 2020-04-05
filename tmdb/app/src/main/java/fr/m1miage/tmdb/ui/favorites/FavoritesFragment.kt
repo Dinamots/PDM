@@ -35,30 +35,30 @@ class FavoritesFragment : Fragment() {
         root = inflater.inflate(R.layout.fragment_favorites, container, false)
         val sharedPreferences = activity?.getPreferences(Context.MODE_PRIVATE)
         root.favorites_recycler_view?.layoutManager = GridLayoutManager(context, MAX_SPAN_COUNT)
-
-        root.favorites_recycler_view?.adapter =
-            MovieAdapter(
-                sharedPreferences!!.getFavorites().movies,
-                null,
-                sharedPreferences,
-                {
-                    if (ConnectionManager.isConnected.value == true) {
-                        val navController = findNavController(activity!!, R.id.nav_host_fragment)
-                        val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
-                        navController.navigate(R.id.nav_movie_detail)
-                        movieDetailViewModel.movieId.value = it.id
-                    } else {
-                        snack(view!!, getString(R.string.connection_needed))
-                    }
-
-                }
-            ) { movieResponse, adapter ->
-                onFavoriteButtonClick(sharedPreferences, movieResponse, adapter)
-            }
+        root.favorites_recycler_view?.adapter = getAdapter(sharedPreferences)
         return root
     }
 
-    private fun onItemClick(movieResponse: MovieResponse) {
+    private fun getAdapter(sharedPreferences: SharedPreferences?): MovieAdapter {
+        return MovieAdapter(
+            sharedPreferences!!.getFavorites().movies,
+            null,
+            sharedPreferences,
+            { onClickOnMovie(it) }
+        ) { movieResponse, adapter ->
+            onFavoriteButtonClick(sharedPreferences, movieResponse, adapter)
+        }
+    }
+
+    private fun onClickOnMovie(it: MovieResponse) {
+        if (ConnectionManager.isConnected.value == true) {
+            val navController = findNavController(activity!!, R.id.nav_host_fragment)
+            val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
+            navController.navigate(R.id.nav_movie_detail)
+            movieDetailViewModel.movieId.value = it.id
+        } else {
+            snack(view!!, getString(R.string.connection_needed))
+        }
     }
 
     private fun onFavoriteButtonClick(

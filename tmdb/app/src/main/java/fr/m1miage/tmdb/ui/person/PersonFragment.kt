@@ -2,6 +2,7 @@ package fr.m1miage.tmdb.ui.person
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -78,12 +79,12 @@ class PersonFragment : Fragment() {
 
         personViewModel.onLoadingPersonDetail.observe(viewLifecycleOwner, Observer {
             loading_movie_img.visibility = if (it) View.VISIBLE else View.GONE
-            person_header.visibility = if(it) View.GONE else View.VISIBLE
+            person_header.visibility = if (it) View.GONE else View.VISIBLE
         })
 
         personViewModel.onLoadingFilmography.observe(viewLifecycleOwner, Observer {
-            loading_filmography.visibility = if(it) View.VISIBLE else View.GONE
-            person_filmography.visibility = if(it) View.GONE else View.VISIBLE
+            loading_filmography.visibility = if (it) View.VISIBLE else View.GONE
+            person_filmography.visibility = if (it) View.GONE else View.VISIBLE
         })
 
 
@@ -98,26 +99,34 @@ class PersonFragment : Fragment() {
     }
 
     private fun initText(personDetail: PersonDetail) {
-        var birthDeathString = ""
-        if (personDetail.birthday !== null) {
-            birthDeathString =
-                "${formatDate(personDetail.birthday)} - ${if (personDetail.deathday != null)
-                    formatDate(personDetail.deathday) else getString(R.string.alive)}"
-
-        }
-        val imdbLink = IMDB_PERSON_PATH + personDetail.imdb_id
 
         person_name.text = personDetail.name
-        person_birth_death.text = birthDeathString
+        person_birth_death.text = getBirthDeathString(personDetail)
         place_of_birth.text = personDetail.place_of_birth
         imdb_link.movementMethod = LinkMovementMethod.getInstance()
-        imdb_link.text =
-            HtmlCompat.fromHtml(
-                "<a href=\"$imdbLink\">${getString(R.string.tmdb_link)}</a>",
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
+        imdb_link.text = getLink(personDetail)
 
     }
+
+    private fun getLink(personDetail: PersonDetail): Spanned {
+        return HtmlCompat.fromHtml(
+            getHtmlLink(personDetail),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+    }
+
+    private fun getHtmlLink(personDetail: PersonDetail) =
+        "<a href=\"${IMDB_PERSON_PATH + personDetail.imdb_id}\">${getString(R.string.tmdb_link)}</a>"
+
+    private fun getBirthDeathString(personDetail: PersonDetail): String {
+        if (personDetail.birthday != null) {
+            return "${formatDate(personDetail.birthday)} - ${if (personDetail.deathday != null)
+                formatDate(personDetail.deathday) else getString(R.string.alive)}"
+        }
+        return ""
+
+    }
+
 
     private fun initPersonImg(personDetail: PersonDetail) {
         Picasso.get()
@@ -135,7 +144,7 @@ class PersonFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        person_header.visibility =  View.GONE
+        person_header.visibility = View.GONE
         super.onDestroyView()
     }
 

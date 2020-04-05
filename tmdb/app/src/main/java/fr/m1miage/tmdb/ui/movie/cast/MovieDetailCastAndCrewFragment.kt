@@ -56,15 +56,16 @@ class MovieDetailCastAndCrewFragment : Fragment() {
     }
 
     private fun getAdapter(): PersonAdapter {
-        return PersonAdapter(mutableListOf()) {
-            if(ConnectionManager.isConnected.value == true) {
-                val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
-                navController.navigate(R.id.nav_person)
-                personViewModel.personId.postValue(it.id)
-            } else {
-                snack(view!!,getString(R.string.connection_needed))
-            }
+        return PersonAdapter(mutableListOf()) { onClickPerson(it) }
+    }
 
+    private fun onClickPerson(it: Person) {
+        if (ConnectionManager.isConnected.value == true) {
+            val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+            navController.navigate(R.id.nav_person)
+            personViewModel.personId.postValue(it.id)
+        } else {
+            snack(view!!, getString(R.string.connection_needed))
         }
     }
 

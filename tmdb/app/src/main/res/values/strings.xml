@@ -14,7 +14,7 @@
     <string name="home_second" translatable="false">Home Second</string>
 
     <string name="upcoming_movies">Upcoming Movies</string>
-    <string name="now_playing_movies" translatable="false">Now Playing Movies</string>
+    <string name="now_playing_movies">Now Playing Movies</string>
     <string name="top_rated_movies">Top Rated Movies</string>
     <string name="popular_movies">Popular Movies</string>
     <string name="add_to_favorites">Favorites</string>
@@ -42,4 +42,6 @@
     <string name="alive">Today</string>
     <string name="spanish">Spanish</string>
     <string name="no_results">No results</string>
+    <string name="connection_lost">Internet connection lost</string>
+    <string name="added_to_favorite">Added to favorites</string>
 </resources>

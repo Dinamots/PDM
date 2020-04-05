@@ -27,7 +27,7 @@ abstract class FetchViewModel : ViewModel() {
                     loading.postValue(false)
                     error.postValue(false)
                 },
-                {error.postValue(true) }
+                {err -> err.printStackTrace();error.postValue(true) }
             )
     }
 

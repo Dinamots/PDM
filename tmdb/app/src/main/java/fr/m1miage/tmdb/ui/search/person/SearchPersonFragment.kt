@@ -33,6 +33,7 @@ class SearchPersonFragment : Fragment() {
     var currentPage = 1
     var searchString = ""
     var newSearch = true
+
     companion object {
         fun newInstance() = SearchPersonFragment()
     }
@@ -52,26 +53,14 @@ class SearchPersonFragment : Fragment() {
         search_person_recycler_view.adapter = adapter
         search_person_recycler_view.layoutManager = layout
 
-        searchViewModel.searchSting.observe(viewLifecycleOwner, Observer {
-            newSearch = true
-            searchString = it
-            currentPage = 1
-            searchPersonViewModel.fetchPersons(searchString, currentPage)
-        })
+        searchViewModel.searchSting.observe(viewLifecycleOwner, Observer { onSearch(it) })
 
         searchPersonViewModel.totalPages.observe(viewLifecycleOwner, Observer {
             totalPages = it
         })
 
         searchPersonViewModel.persons.observe(viewLifecycleOwner, Observer {
-            if(newSearch) {
-                adapter.persons = it.toPersons().toMutableList()
-                onNoResults(it)
-                newSearch = false
-            } else {
-                adapter.persons.addAll(it.toPersons().toMutableList())
-            }
-            adapter.notifyDataSetChanged()
+            onPersonsSuccess(adapter, it)
         })
 
         search_person_recycler_view.addOnScrollListener(object : PaginationListener(layout) {
@@ -91,18 +80,40 @@ class SearchPersonFragment : Fragment() {
         })
     }
 
+    private fun onPersonsSuccess(
+        adapter: PersonAdapter,
+        it: List<PersonResponse>
+    ) {
+        if (newSearch) {
+            adapter.persons = it.toPersons().toMutableList()
+            onNoResults(it)
+            newSearch = false
+        } else {
+            adapter.persons.addAll(it.toPersons().toMutableList())
+        }
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun onSearch(it: String) {
+        newSearch = true
+        searchString = it
+        currentPage = 1
+        searchPersonViewModel.fetchPersons(searchString, currentPage)
+    }
+
     private fun getAdapter(): PersonAdapter {
         return PersonAdapter(
             mutableListOf()
-        ) {
-            if(ConnectionManager.isConnected.value == true) {
-                val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
-                navController.navigate(R.id.nav_person)
-                personViewModel.personId.postValue(it.id)
-            } else {
-                snack(view!!,getString(R.string.connection_needed))
-            }
+        ) { onClickPerson(it) }
+    }
 
+    private fun onClickPerson(it: Person) {
+        if (ConnectionManager.isConnected.value == true) {
+            val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+            navController.navigate(R.id.nav_person)
+            personViewModel.personId.postValue(it.id)
+        } else {
+            snack(view!!, getString(R.string.connection_needed))
         }
     }
 
