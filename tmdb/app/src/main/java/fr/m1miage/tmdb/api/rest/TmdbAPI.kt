@@ -39,7 +39,7 @@ interface TmdbAPI {
     fun getFilmography(@Path("person_id") id: Long): Observable<Credits<MovieResponse>>
 
     @GET("person/{person_id}")
-    fun getPerson(@Path("person_id") id: Long): Observable<PersonDetail>
+    fun getPersonDetail(@Path("person_id") id: Long): Observable<PersonDetail>
 
     @GET("search/person")
     fun searchPersons(

@@ -1,29 +1,25 @@
 package fr.m1miage.tmdb.ui.movie.cast
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import fr.m1miage.tmdb.ConnectionManager
 
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.PersonAdapter
-import fr.m1miage.tmdb.api.RetrofitManager
 import fr.m1miage.tmdb.api.model.Credits
-import fr.m1miage.tmdb.api.model.Movie
 import fr.m1miage.tmdb.api.model.Person
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.ui.person.PersonViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
+import fr.m1miage.tmdb.utils.snack
 import kotlinx.android.synthetic.main.movie_detail_cast_and_crew_fragment.*
-import okhttp3.internal.notifyAll
 
 class MovieDetailCastAndCrewFragment : Fragment() {
     val crewAdapter: PersonAdapter = getAdapter()
@@ -49,7 +45,9 @@ class MovieDetailCastAndCrewFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
-            movieDetailCastAndCrewViewModel.fetchCredits(it.id)
+            if (it != null) {
+                movieDetailCastAndCrewViewModel.fetchCredits(it.id)
+            }
         })
 
         movieDetailCastAndCrewViewModel.credits.observe(viewLifecycleOwner, Observer {
@@ -58,10 +56,16 @@ class MovieDetailCastAndCrewFragment : Fragment() {
     }
 
     private fun getAdapter(): PersonAdapter {
-        return PersonAdapter(mutableListOf()) {
+        return PersonAdapter(mutableListOf()) { onClickPerson(it) }
+    }
+
+    private fun onClickPerson(it: Person) {
+        if (ConnectionManager.isConnected.value == true) {
             val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
             navController.navigate(R.id.nav_person)
-            personViewModel.person.postValue(it)
+            personViewModel.personId.postValue(it.id)
+        } else {
+            snack(view!!, getString(R.string.connection_needed))
         }
     }
 

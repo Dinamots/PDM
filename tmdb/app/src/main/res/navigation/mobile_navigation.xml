@@ -46,9 +46,15 @@
         tools:layout="@layout/search_fragment" />
 
     <fragment
+        android:id="@+id/nav_no_internet"
+        android:name="fr.m1miage.tmdb.ui.internet.NoInternetFragment"
+        android:label="@string/search_title"
+        tools:layout="@layout/no_internet_fragment" />
+
+    <fragment
         android:id="@+id/nav_favorite"
         android:name="fr.m1miage.tmdb.ui.favorites.FavoritesFragment"
         android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_favorites"/>
+        tools:layout="@layout/fragment_favorites" />
 
 </navigation>

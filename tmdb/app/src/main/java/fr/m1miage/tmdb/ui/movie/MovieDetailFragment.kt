@@ -20,22 +20,21 @@ import fr.m1miage.tmdb.api.model.Video
 import fr.m1miage.tmdb.listeners.YoutubeOnInitializedListener
 import fr.m1miage.tmdb.ui.movie.cast.MovieDetailCastAndCrewFragment
 import fr.m1miage.tmdb.ui.movie.infos.MovieDetailInfosFragment
-import fr.m1miage.tmdb.utils.GOOFLE_API_KEY
-import fr.m1miage.tmdb.utils.MAX_SPAN_COUNT
-import fr.m1miage.tmdb.utils.MIN_SPAN_COUNT
-import fr.m1miage.tmdb.utils.TMDB_IMAGES_PATH
+import fr.m1miage.tmdb.utils.*
 import jp.wasabeef.picasso.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.movie_detail_fragment.*
+import kotlinx.android.synthetic.main.movie_detail_fragment.movie_rating
 import java.text.SimpleDateFormat
 
 
-class MovieDetailFragment() : Fragment() {
+class MovieDetailFragment : Fragment() {
     val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
     val genreAdapter: GenreAdapter = GenreAdapter(listOf())
     lateinit var youTubePlayerFragment: YouTubePlayerSupportFragment
     lateinit var youtubePlayer: YouTubePlayer
     lateinit var videos: List<Video>
     lateinit var pagerAdapter: BasicViewPagerAdapter
+    var error = false
 
     companion object {
         fun newInstance() = MovieDetailFragment()
@@ -77,20 +76,45 @@ class MovieDetailFragment() : Fragment() {
         )
         movie_genres.apply { setHasFixedSize(true); adapter = genreAdapter }
         initTabs()
+        initYoutubePlayer()
+        movieDetailViewModel.onLoadingMovie
         movieDetailViewModel.movieId.observe(viewLifecycleOwner, Observer {
-            movieDetailViewModel.fetchAll(it)
+            if (it != null) {
+                movieDetailViewModel.fetchAll(it)
+            }
         })
 
-        initYoutubePlayer()
 
         movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
-            initView(it)
+            if (it != null) {
+                initView(it)
+            }
         })
 
         movieDetailViewModel.videos.observe(viewLifecycleOwner, Observer {
             videos = it
             if (it.isNotEmpty()) {
                 trailer_button.visibility = View.VISIBLE
+            }
+        })
+
+        movieDetailViewModel.onLoadingMovie.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                loading_movie_header.visibility = View.VISIBLE
+                movie_detail_loader.visibility = View.VISIBLE
+                view_pager.visibility = View.GONE
+            } else {
+                loading_movie_header.visibility = View.GONE
+                movie_detail_loader.visibility = View.GONE
+                view_pager.visibility = View.VISIBLE
+            }
+        })
+
+        movieDetailViewModel.onErrorMovie.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                loading_movie_header.visibility = View.GONE
+                movie_detail_loader.visibility = View.GONE
+                movieDetailViewModel.onErrorMovie.postValue(false)
             }
         })
 
@@ -101,9 +125,9 @@ class MovieDetailFragment() : Fragment() {
         movie_detail_tab_layout.setupWithViewPager(view_pager)
         view_pager.adapter = pagerAdapter
         movie_detail_tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_movie_black_24dp)
-        movie_detail_tab_layout.getTabAt(0)?.text = "Movie"
+        movie_detail_tab_layout.getTabAt(0)?.text = getString(R.string.movie)
         movie_detail_tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_videocam_black_24dp)
-        movie_detail_tab_layout.getTabAt(1)?.text = "Cast & Crew"
+        movie_detail_tab_layout.getTabAt(1)?.text = getString(R.string.cast_amp_crew)
     }
 
     private fun initView(movie: Movie) {
@@ -111,7 +135,8 @@ class MovieDetailFragment() : Fragment() {
         initText(movie)
         initGenres(movie)
         initTrailerButton()
-        movie_rating.rating = (movie.vote_average / 2).toFloat()
+        movie_rating.rating = (movie.vote_average?.div(2))?.toFloat() ?: 0F
+
 
     }
 
@@ -131,15 +156,19 @@ class MovieDetailFragment() : Fragment() {
     }
 
     private fun initText(movie: Movie) {
-        movie_title.text = movie.title
-        release.text = SimpleDateFormat("dd-MM-yyyy").format(movie.release_date)
+        movie_title.text = movie.title ?: ""
+        release.text =
+            if (movie.release_date != null) SimpleDateFormat("dd-MM-yyyy").format(movie.release_date) else ""
     }
 
 
     private fun initGenres(movie: Movie) {
         movie_genres.layoutManager =
-            GridLayoutManager(context, getSpanCount(movie.genres.size))
-        genreAdapter.genres = movie.genres
+            GridLayoutManager(
+                context,
+                if (movie.genres != null) getSpanCount(movie.genres.size) else 0
+            )
+        genreAdapter.genres = movie.genres ?: listOf()
         genreAdapter.notifyDataSetChanged()
     }
 
@@ -158,6 +187,16 @@ class MovieDetailFragment() : Fragment() {
             .transform(BlurTransformation(context, 15, 1))
             .fit()
             .into(movie_backdrop)
+    }
+
+    override fun onStop() {
+        movieDetailViewModel.movie.postValue(null)
+        movie_title.text = ""
+        release.text = ""
+        movie_rating.rating = 0F
+        genreAdapter.genres = listOf()
+        genreAdapter.notifyDataSetChanged()
+        super.onStop()
     }
 
 }

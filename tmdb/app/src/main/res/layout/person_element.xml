@@ -27,8 +27,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:textColor="#FFFFFF"
-            android:maxLines="1"
-            android:text="Actor Name" />
+            android:maxLines="1" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/person_job"
@@ -39,8 +38,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:textColor="#FFFFFF"
-            android:maxLines="1"
-            android:text="Person Role" />
+            android:maxLines="1" />
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

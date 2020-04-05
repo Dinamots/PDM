@@ -1,28 +1,31 @@
 package fr.m1miage.tmdb.ui.home
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import fr.m1miage.tmdb.ConnectionManager
 import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
-import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
+import fr.m1miage.tmdb.utils.*
+import fr.m1miage.tmdb.utils.extension.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {
     private val adapterMap: HashMap<Int, MovieAdapter> = HashMap()
     private val homeViewModel: HomeViewModel by activityViewModels()
-
+    private lateinit var preferences: SharedPreferences
     private lateinit var root: View
 
     override fun onCreateView(
@@ -31,12 +34,12 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         root = inflater.inflate(R.layout.fragment_home, container, false)
+        preferences = activity?.getPreferences(Context.MODE_PRIVATE)!!
         initAdapters()
         initMovieLists()
         initLayoutManagers()
         return root
     }
-
 
     private fun initLayoutManagers() {
         root.top_rated_movies?.layoutManager =
@@ -80,49 +83,104 @@ class HomeFragment : Fragment() {
     private fun initMovieLists() {
         initMovieList(
             homeViewModel.nowPlayingMovies,
-            adapterMap[root.now_playing_movies.id]
+            homeViewModel.onErrorNowPlaying,
+            homeViewModel.onLoadNowPlaying,
+            root.loading_playing,
+            adapterMap[root.now_playing_movies.id],
+            MOVIE_MAP_PLAYING_KEY
         )
 
         initMovieList(
             homeViewModel.popularMovies,
-            adapterMap[root.popular_movies.id]
+            homeViewModel.onErrorPopular,
+            homeViewModel.onLoadPopular,
+            root.loading_popular,
+            adapterMap[root.popular_movies.id],
+            MOVIE_MAP_POPULAR_KEY
         )
 
         initMovieList(
             homeViewModel.topRatedMovies,
-            adapterMap[root.top_rated_movies.id]
+            homeViewModel.onErrorTopRated,
+            homeViewModel.onLoadTopRated,
+            root.loading_top_rated,
+            adapterMap[root.top_rated_movies.id],
+            MOVIE_MAP_TOP_KEY
         )
 
         initMovieList(
             homeViewModel.upcomingMovies,
-            adapterMap[root.upcoming_movies.id]
+            homeViewModel.onErrorUpcoming,
+            homeViewModel.onLoadUpcoming,
+            root.loading_upcoming,
+            adapterMap[root.upcoming_movies.id],
+            MOVIE_MAP_UPCOMING_KEY
         )
     }
 
     private fun initMovieList(
         movies: LiveData<List<MovieResponse>>,
+        error: MutableLiveData<Boolean>,
+        loading: MutableLiveData<Boolean>,
+        loader: RelativeLayout,
+        movieAdapter: MovieAdapter?,
+        key: String
+    ) {
+        movies.observe(viewLifecycleOwner, Observer { onSuccess(it, key, movieAdapter) })
+        error.observe(viewLifecycleOwner, Observer { onError(it, loading, key, movieAdapter) })
+        loading.observe(viewLifecycleOwner, Observer { onLoading(loader, it) })
+
+    }
+
+    private fun onLoading(loader: RelativeLayout, it: Boolean) {
+        loader.visibility = if (it) View.VISIBLE else View.GONE
+    }
+
+    private fun onSuccess(
+        it: List<MovieResponse>,
+        key: String,
         movieAdapter: MovieAdapter?
     ) {
-        movies.observe(viewLifecycleOwner, Observer {
-            movieAdapter?.movies = it.toMutableList()
-            movieAdapter?.notifyDataSetChanged()
-        })
+        preferences.addMovieList(it, key)
+        movieAdapter?.movies = it.toMutableList()
+        movieAdapter?.notifyDataSetChanged()
+    }
+
+    private fun onError(
+        it: Boolean,
+        loading: MutableLiveData<Boolean>,
+        key: String,
+        movieAdapter: MovieAdapter?
+    ) {
+        if (it) {
+            loading.postValue(false)
+            val mvs = preferences.getMovieMap()[key]?.toMutableList()
+            if (mvs != null) {
+                movieAdapter?.movies = mvs
+                movieAdapter?.notifyDataSetChanged()
+            }
+
+        }
     }
 
     private fun getAdapter(headerString: String): MovieAdapter {
-        val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
         return MovieAdapter(
             mutableListOf(),
             headerString,
             preferences,
             {
-                val navController = findNavController(activity!!, R.id.nav_host_fragment)
-                val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
-                navController.navigate(R.id.nav_movie_detail)
-                movieDetailViewModel.movieId.postValue(it.id)
+                if (ConnectionManager.isConnected.value == true) {
+                    val navController = findNavController(activity!!, R.id.nav_host_fragment)
+                    val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
+                    navController.navigate(R.id.nav_movie_detail)
+                    movieDetailViewModel.movieId.postValue(it.id)
+                } else {
+                    snack(view!!, getString(R.string.connection_needed))
+                }
+
             }
         ) { movieResponse, _ ->
-            preferences?.addOrRemoveMovie(movieResponse)
+            preferences.addOrRemoveMovie(movieResponse)
         }
 
     }

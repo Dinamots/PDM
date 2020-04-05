@@ -41,7 +41,9 @@ class MovieDetailInfosFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         movieDetailViewModel.movie.observe(viewLifecycleOwner, Observer {
-            initView(it)
+            if(it != null) {
+                initView(it)
+            }
         })
     }
 
@@ -69,7 +71,7 @@ class MovieDetailInfosFragment : Fragment() {
                     "${movie.title} \n" +
                             " ${movie.homepage} \n" +
                             " ${IMDB_MOVIE_PATH + movie.imdb_id} \n" +
-                            " ${movie.vote_average / 2} / 5 "
+                            " ${movie.vote_average?.div(2)} / 5 "
                 )
                 type = "text/plain"
             }

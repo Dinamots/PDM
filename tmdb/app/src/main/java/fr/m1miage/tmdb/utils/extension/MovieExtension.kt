@@ -17,7 +17,7 @@ fun Movie.toMovieReponse(): MovieResponse {
         backdrop_path = backdrop_path,
         original_language = original_language,
         original_title = original_title,
-        genre_ids = genres.fold(mutableListOf(), { acc, genre ->
+        genre_ids = genres?.fold(mutableListOf(), { acc, genre ->
             run {
                 acc.add(genre.id)
                 acc

@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_movie_black_24dp"
-            android:title="@string/menu_home" />
+            android:title="@string/menu_home"
+            app:showAsAction="always" />
         <item
             android:id="@+id/nav_favorite"
             android:icon="@drawable/ic_star_black_24dp"
-            android:title="@string/menu_slideshow" />
+            android:title="@string/menu_slideshow"
+            app:showAsAction="ifRoom" />
+        <item
+            android:id="@+id/languages"
+            android:icon="@drawable/ic_language_black_24dp"
+            android:title="@string/languages"
+            app:showAsAction="ifRoom" />
     </group>
 </menu>

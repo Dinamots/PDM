@@ -1,9 +1,11 @@
 package fr.m1miage.tmdb.api
 
+import android.content.SharedPreferences
 import com.google.gson.*
 import fr.m1miage.tmdb.api.rest.TmdbAPI
 import fr.m1miage.tmdb.utils.API_KEY
 import fr.m1miage.tmdb.utils.API_URL
+import fr.m1miage.tmdb.utils.extension.getLocale
 import fr.m1miage.tmdb.utils.gson
 import okhttp3.*
 import retrofit2.Retrofit
@@ -19,6 +21,7 @@ import java.util.*
 class RetrofitManager {
 
     companion object {
+        lateinit var preferences: SharedPreferences
         val tmdbAPI: TmdbAPI = getInstance().create(TmdbAPI::class.java)
 
         private fun getInstance(): Retrofit {
@@ -34,13 +37,14 @@ class RetrofitManager {
 
 
         private fun getUpdatedChain(chain: Interceptor.Chain): Response {
-            val originalRequest: Request = chain.request();
-            val originalHttpUrl: HttpUrl = originalRequest.url;
+            val originalRequest: Request = chain.request()
+            val originalHttpUrl: HttpUrl = originalRequest.url
             val url: HttpUrl = originalHttpUrl
                 .newBuilder()
                 .addQueryParameter("api_key", API_KEY)
-                .addQueryParameter("language", "fr")
+                .addQueryParameter("language", preferences.getLocale().toString())
                 .build()
+            println("URL = $url")
             val requestBuilder: Request.Builder = originalRequest.newBuilder().url(url)
             val newRequest: Request = requestBuilder.build()
             return chain.proceed(newRequest)

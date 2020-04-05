@@ -1,7 +1,6 @@
 package fr.m1miage.tmdb.ui.search.movie
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,14 +10,16 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
+import fr.m1miage.tmdb.ConnectionManager
 
 import fr.m1miage.tmdb.R
 import fr.m1miage.tmdb.adapter.MovieAdapter
 import fr.m1miage.tmdb.adapter.PaginationListener
+import fr.m1miage.tmdb.api.model.MovieResponse
 import fr.m1miage.tmdb.ui.movie.MovieDetailViewModel
 import fr.m1miage.tmdb.ui.search.SearchViewModel
 import fr.m1miage.tmdb.utils.extension.addOrRemoveMovie
-import fr.m1miage.tmdb.utils.extension.getFavorites
+import fr.m1miage.tmdb.utils.snack
 import kotlinx.android.synthetic.main.search_movie_fragment.*
 
 class SearchMovieFragment : Fragment() {
@@ -27,6 +28,7 @@ class SearchMovieFragment : Fragment() {
     var currentPage = 1
     var searchString = ""
     var newSearch = true
+
     companion object {
         fun newInstance() = SearchMovieFragment()
     }
@@ -47,12 +49,7 @@ class SearchMovieFragment : Fragment() {
         val layout = GridLayoutManager(context, 3)
         search_movie_recycler_view.adapter = adapter
         search_movie_recycler_view.layoutManager = layout
-        searchViewModel.searchSting.observe(viewLifecycleOwner, Observer {
-            newSearch = true
-            searchString = it
-            currentPage = 1
-            searchViewModel.fetchMovies(searchString, currentPage)
-        })
+        searchViewModel.searchSting.observe(viewLifecycleOwner, Observer { onSearch(it) })
 
         search_movie_recycler_view.addOnScrollListener(object : PaginationListener(layout) {
             override fun loadMoreItems() {
@@ -71,18 +68,44 @@ class SearchMovieFragment : Fragment() {
         })
 
         searchViewModel.movies.observe(viewLifecycleOwner, Observer {
-            if(newSearch) {
-                adapter.movies = it.toMutableList()
-                newSearch = false
-            } else {
-                adapter.movies.addAll(it)
-            }
-            adapter.notifyDataSetChanged()
+            onSuccessMovies(adapter, it)
         })
 
         searchViewModel.totalPages.observe(viewLifecycleOwner, Observer {
             totalPages = it
-        })    }
+        })
+    }
+
+    private fun onSearch(it: String) {
+        newSearch = true
+        searchString = it
+        currentPage = 1
+        searchViewModel.fetchMovies(searchString, currentPage)
+    }
+
+    private fun onSuccessMovies(
+        adapter: MovieAdapter,
+        it: List<MovieResponse>
+    ) {
+        if (newSearch) {
+            adapter.movies = it.toMutableList()
+            onNoResults(it)
+            newSearch = false
+        } else {
+            adapter.movies.addAll(it)
+        }
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun onNoResults(movies: List<MovieResponse>) {
+        if (movies.isEmpty()) {
+            no_results.visibility = View.VISIBLE
+            search_movie_recycler_view.visibility = View.GONE
+        } else {
+            no_results.visibility = View.GONE
+            search_movie_recycler_view.visibility = View.VISIBLE
+        }
+    }
 
     private fun getAdapter(): MovieAdapter {
         val preferences = activity?.getPreferences(Context.MODE_PRIVATE);
@@ -90,16 +113,19 @@ class SearchMovieFragment : Fragment() {
             mutableListOf(),
             null,
             preferences,
-            {
-                val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
-                val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
-                navController.navigate(R.id.nav_movie_detail)
-                movieDetailViewModel.movieId.value = it.id
-            }
-        )
-        { movieResponse, _ ->
-            preferences?.addOrRemoveMovie(movieResponse)
-            println(preferences?.getFavorites()?.movies)
+            { onClickMovie(it) }
+        ) { movieResponse, _ -> preferences?.addOrRemoveMovie(movieResponse) }
+    }
+
+    private fun onClickMovie(it: MovieResponse) {
+        if (ConnectionManager.isConnected.value == true) {
+            val navController =
+                Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+            val movieDetailViewModel: MovieDetailViewModel by activityViewModels()
+            navController.navigate(R.id.nav_movie_detail)
+            movieDetailViewModel.movieId.value = it.id
+        } else {
+            snack(view!!, getString(R.string.connection_needed))
         }
     }
 
